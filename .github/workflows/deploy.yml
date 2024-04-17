@@ -37,6 +37,9 @@ jobs:
           echo "ACCESS_TOKEN_LIFE=${{ secrets.ACCESS_TOKEN_LIFE }}" >> .env
           echo "REFRESH_TOKEN_LIFE=${{ secrets.REFRESH_TOKEN_LIFE }}" >> .env
           echo "SECRET_KEY_COOKIE=${{ secrets.SECRET_KEY_COOKIE }}" >> .env
+      
+      - name: Install Dependencies
+        run: npm install
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
@@ -47,7 +50,6 @@ jobs:
             REMOTE_USER: ${{ secrets.REMOTE_USER }}
             TARGET: ${{ secrets.REMOTE_TARGET }}
             SCRIPT_AFTER: |
-              ls
-              npm install
-              pm2 start /home/ubuntu/chatting-app/index.js
+              ls -la
+              pm2 restart chatting-app
               echo $RSYNC_STDOUT
