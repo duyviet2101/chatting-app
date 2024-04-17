@@ -13,6 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 //! end middlewares
 
+//! databases
+const mongoDatabase = require('./databases/database.js');
+//! end databases
+
 //! view, static files
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
