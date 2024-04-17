@@ -123,3 +123,31 @@ module.exports.logout = async (req, res, next) => {
   res.clearCookie('refreshTokenUser');
   res.redirect('/auth/login');
 }
+
+// [PATCH] /auth/change-password
+module.exports.changePassword = async (req, res, next) => {
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const user = await User.findById(req.user._id);
+
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    req.flash('error', 'Fill in all fields!');
+    return res.redirect('back');
+  }
+
+  const checkPassword = await bcrypt.compare(oldPassword, user.password);
+  if (!checkPassword) {
+    req.flash('error', 'Old password is wrong!');
+    return res.redirect('back');
+  }
+
+  if (newPassword !== confirmPassword) {
+    req.flash('error', 'New password and confirm password are not the same!');
+    return res.redirect('back');
+  }
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  await user.save();
+
+  req.flash('success', 'Change password successfully!');
+  res.redirect('back');
+}
