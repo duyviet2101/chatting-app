@@ -1,0 +1,28 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  link(rel='shortcut icon' href='/images/favicon.ico')
+  title 404 - Not Found
+  link(rel='stylesheet' href='/assets/css/bundle.css?v131')
+  link(rel='stylesheet' href='/assets/css/app.css?v131')
+.tyn-root
+  .tyn-content.d-flex.justify-content-center.align-items-center
+    .container
+      .row.justify-content-center
+        .col-xl-4.col-lg-5.col-md-6.col-sm-8
+          .px-4
+            img.w-100(src='/images/gfx/404.svg' alt='')
+          .tyn-text-block.text-center.pt-5
+            h2 Oops! Page does not exist
+            p.px-xl-4 Looks like you&apos;ve stumbled upon a page that doesn&apos;t exist.
+            p.error.text-start
+              | ERROR: 
+              | !{message}
+            a.btn.btn-primary.mt-2(href='/messages') Back to Home
+        // .col
+      // .row
+    // .container
+script(src='/assets/js/bundle.js?v131')
+script(src='/assets/js/app.js?v131')

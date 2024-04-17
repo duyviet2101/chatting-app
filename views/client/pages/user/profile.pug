@@ -6,12 +6,16 @@ block main
       .container
         .tyn-profile
           .tyn-profile-head
-            .tyn-profile-cover
+            .tyn-profile-cover.position-relative
               img.tyn-profile-cover-image(src=`${user.cover ? user.cover : '/images/cover/2.jpg'}` alt='')
+              .overplay.d-flex.align-items-center.justify-content-center.update-image-trigger(data-target-input='#cover')
+                i.fas.fa-pencil-alt
             .tyn-profile-info
               .tyn-media-group.align-items-start
-                .tyn-media.tyn-media-bordered.tyn-size-4xl.tyn-profile-avatar
+                .tyn-media.tyn-media-bordered.tyn-size-4xl.tyn-profile-avatar.position-relative
                   img(src=user.avatar alt='')
+                  .overplay.d-flex.align-items-center.justify-content-center.update-image-trigger(data-target-input='#avatar')
+                    i.fas.fa-pencil-alt
                 .tyn-media-col
                   .tyn-media-row
                     h4.name
@@ -39,8 +43,11 @@ block main
           // .tyn-profile-nav
           .tyn-profile-details
             .tab-content
-              form#profile-edit.tab-pane.show.active(tabindex='0' action='/user/profile?_method=PATCH' method='POST')
+              form#profile-edit.tab-pane.show.active(tabindex='0' action='/user/profile/edit?_method=PATCH' method='POST' enctype='multipart/form-data')
                 .row.gy-5
+                  // input avatar, cover
+                  input#avatar.form-control.d-none(name="avatar" type='file' accept='image/*')
+                  input#cover.form-control.d-none(name="cover" type='file' accept='image/*')
                   // .col-12
                   .col-12
                     .row.gy-4
@@ -53,7 +60,7 @@ block main
                             .form-group
                               label.form-label(for='bio') Bio
                               .form-control-wrap
-                                textarea#bio.form-control(placeholder='Your Bio' rows='4') #{user.bio}
+                                textarea#bio.form-control(name="bio" placeholder='Your Bio' rows='4') #{user.bio}
                   .col-12
                     .row.gy-4
                       .col-lg-3
@@ -64,6 +71,7 @@ block main
                           .col-lg-6
                             .form-group
                               label.form-label(for='firstName') Full Name
+                                span.text-danger *
                               .form-control-wrap
                                 input#fullName.form-control(name="fullName" type='text' placeholder='Your Full Name' value=user.fullName required)
                           // .col
@@ -78,6 +86,7 @@ block main
                             .form-group
                               label.form-label.d-flex(for='email')
                                 | Email 
+                                span.text-danger *
                                 if (user.verified)
                                   span.small.ms-2.text-success Verified
                                 else 
@@ -100,9 +109,9 @@ block main
                           // .col
                           .col-lg-6
                             .form-group
-                              label.form-label(for='phoneNumber') Phone Number
+                              label.form-label(for='phone') Phone Number
                               .form-control-wrap
-                                input#phoneNumber.form-control(type='text' placeholder='Your Number' value=`${user.phone ? user.phone : ''}`)
+                                input#phone.form-control(name="phone" type='text' placeholder='Your Number' value=`${user.phone ? user.phone : ''}`)
                           // .col
                           .col-12.text-end
                             button.btn.btn-sm.btn-primary(type='submit') Save Changes

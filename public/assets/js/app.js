@@ -465,18 +465,18 @@ document.addEventListener('DOMContentLoaded', function() {
   function activateTabFromHash() {
       var hash = window.location.hash;
       const tabActive = document.querySelectorAll('.nav-link.active, .tab-pane.active');
-      var tab = document.querySelector(`.nav-link[data-bs-target='${hash}']`);
-      var tabPane = document.querySelector(hash);
-
+      
       if (hash && tabActive && tabActive.length > 0 && tab && tabPane) {
-          // Remove 'active' class from all tabs and tab panes
-          tabActive.forEach(function(element) {
-              element.classList.remove('active');
-              if (element.classList.contains('show')) {
-                  element.classList.remove('show');
-              }
-          });
-
+        // Remove 'active' class from all tabs and tab panes
+        tabActive.forEach(function(element) {
+          element.classList.remove('active');
+          if (element.classList.contains('show')) {
+            element.classList.remove('show');
+          }
+        });
+        
+          var tab = document.querySelector(`.nav-link[data-bs-target='${hash}']`);
+          var tabPane = document.querySelector(hash);
           // Add 'active' class to the tab and tab pane with the same hash
           if (tab && tabPane) {
               tab.classList.add('active');
@@ -492,5 +492,40 @@ document.addEventListener('DOMContentLoaded', function() {
   activateTabFromHash();
 });
 //! end hash active tab
+
+//! .update-image-trigger
+const updateImageTrigger = document.querySelectorAll('.update-image-trigger');
+if (updateImageTrigger && updateImageTrigger.length > 0) {
+  updateImageTrigger.forEach(item => {
+    const target = item.getAttribute('data-target-input');
+    const targetElement = document.querySelector(`input${target}`);
+    if (targetElement) {
+      targetElement.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = item.parentNode.querySelector('img');
+          if (img) {
+            img.src = reader.result;
+          }
+        }
+        reader.readAsDataURL(file);
+
+        alert('Save changes in edit profile to update the image!');
+      })
+    }
+  });
+
+  updateImageTrigger.forEach(item => {
+    item.addEventListener('click', (e) => {
+      const target = item.getAttribute('data-target-input');
+      const targetElement = document.querySelector(`input${target}`);
+      if (targetElement) {
+        targetElement.click();
+      }
+    })
+  })
+}
+//! end .update-image-trigger
 
 //end-js

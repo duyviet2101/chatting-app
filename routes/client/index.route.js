@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {requiredAuth} = require('../middlewares/client/auth.middleware.js');
+const {requiredAuth} = require('../../middlewares/client/auth.middleware.js');
 
 //! public routes
 router.use('/auth', require('./auth.route.js'));
