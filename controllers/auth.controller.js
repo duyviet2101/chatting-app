@@ -151,3 +151,115 @@ module.exports.changePassword = async (req, res, next) => {
   req.flash('success', 'Change password successfully!');
   res.redirect('back');
 }
+
+// [GET] /auth/facebook/callback
+module.exports.facebookLogin = async (req, res, next) => {
+  const { displayName, emails, photos } = req.user;
+  const email = emails[0].value;
+  const user = await User.findOne({
+    email: email,
+    deleted: false,
+    statusAccount: 'active'
+  });
+
+  if (!user) {
+    const newUser = new User({
+      fullName: displayName,
+      email: email,
+      avatar: photos[0].value,
+    });
+
+    await newUser.save();
+  }
+
+  const accessToken = jwt.sign({
+    email: email
+  }, systemConfig.secretKeyAccessToken, {
+    algorithm: 'HS256',
+    expiresIn: systemConfig.accessTokenLife
+  });
+
+  let refreshToken = jwt.sign({
+    email: email
+  }, systemConfig.secretKeyRefreshToken, {
+    algorithm: 'HS256',
+    expiresIn: systemConfig.refreshTokenLife
+  });
+
+  if (!user.refreshToken) {
+    user.refreshToken = refreshToken;
+    await user.save();
+  }
+
+  res.cookie('accessTokenUser', accessToken, {
+    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true
+  });
+
+  res.cookie('refreshTokenUser', refreshToken, {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true
+  });
+
+  res.redirect(`/messages`);
+}
+
+// [GET] /auth/google/callback
+module.exports.googleLogin = async (req, res, next) => {
+  const { displayName, emails, photos } = req.user;
+  const email = emails[0].value;
+  const user = await User.findOne({
+    email: email,
+    deleted: false,
+    statusAccount: 'active'
+  });
+
+  if (!user) {
+    const newUser = new User({
+      fullName: displayName,
+      email: email,
+      avatar: photos[0].value,
+    });
+
+    await newUser.save();
+  }
+
+  const accessToken = jwt.sign({
+    email: email
+  }, systemConfig.secretKeyAccessToken, {
+    algorithm: 'HS256',
+    expiresIn: systemConfig.accessTokenLife
+  });
+
+  let refreshToken = jwt.sign({
+    email: email
+  }, systemConfig.secretKeyRefreshToken, {
+    algorithm: 'HS256',
+    expiresIn: systemConfig.refreshTokenLife
+  });
+
+  if (!user.refreshToken) {
+    user.refreshToken = refreshToken;
+    await user.save();
+  } else {
+    try {
+      jwt.verify(user.refreshToken, systemConfig.secretKeyRefreshToken);
+    } catch (error) {
+      user.refreshToken = refreshToken;
+      await user.save();
+    }
+    refreshToken = user.refreshToken;
+  }
+
+  res.cookie('accessTokenUser', accessToken, {
+    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true
+  });
+
+  res.cookie('refreshTokenUser', refreshToken, {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true
+  });
+
+  res.redirect(`/messages`);
+}

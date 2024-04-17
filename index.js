@@ -6,6 +6,9 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('express-flash');
 const methodOverride = require('method-override');
+const passport = require('passport');
+const FacebookStrategy = require('passport-facebook').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 
 const app = express();
@@ -15,6 +18,45 @@ const port = process.env.PORT || 3066;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+app.use(cookieParser((process.env.SECRET_KEY_COOKIE)));
+app.use(session({
+  secret: process.env.SECRET_KEY_SESSION,
+  saveUninitialized: false,
+  cookie: { 
+    maxAge: 60000 
+  },
+}));
+
+passport.use(new FacebookStrategy({
+  clientID: process.env.FACEBOOK_APP_ID,
+  clientSecret: process.env.FACEBOOK_APP_SECRET,
+  callbackURL: '/auth/facebook/callback',
+}, {
+  function(accessTokenUser, refreshTokenUser, profile, done) {
+    return done(null, profile);
+  }
+}));
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: '/auth/google/callback',
+}, {
+  function(accessTokenUser, refreshTokenUser, profile, done) {
+    return done(null, profile);
+  }
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
 //! end middlewares
 
 //! databases
@@ -32,8 +74,6 @@ app.use(methodOverride('_method'));
 //! end method override
 
 //! flash
-app.use(cookieParser((process.env.SECRET_KEY_COOKIE)));
-app.use(session({ cookie: { maxAge: 60000 }}));
 app.use(flash());
 // app.use((req, res, next) => {
 //     res.locals.success = req.flash('success');
