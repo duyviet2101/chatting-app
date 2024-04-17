@@ -6,10 +6,6 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('express-flash');
 const methodOverride = require('method-override');
-const passport = require('passport');
-const FacebookStrategy = require('passport-facebook').Strategy;
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-
 
 const app = express();
 const port = process.env.PORT || 3066;
@@ -27,36 +23,6 @@ app.use(session({
   },
 }));
 
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: '/auth/facebook/callback',
-}, {
-  function(accessTokenUser, refreshTokenUser, profile, done) {
-    return done(null, profile);
-  }
-}));
-
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: '/auth/google/callback',
-}, {
-  function(accessTokenUser, refreshTokenUser, profile, done) {
-    return done(null, profile);
-  }
-}));
-
-passport.serializeUser((user, done) => {
-  done(null, user);
-});
-
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
-
-app.use(passport.initialize());
-app.use(passport.session());
 //! end middlewares
 
 //! databases
