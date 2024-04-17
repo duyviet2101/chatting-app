@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var hash = window.location.hash;
       const tabActive = document.querySelectorAll('.nav-link.active, .tab-pane.active');
       
-      if (hash && tabActive && tabActive.length > 0 && tab && tabPane) {
+      if (hash && tabActive && tabActive.length > 0) {
         // Remove 'active' class from all tabs and tab panes
         tabActive.forEach(function(element) {
           element.classList.remove('active');
