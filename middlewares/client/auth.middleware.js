@@ -8,7 +8,7 @@ module.exports.requiredAuth = async (req, res, next) => {
   if (!accessTokenUser || !refreshTokenUser) {
     res.clearCookie('accessTokenUser');
     res.clearCookie('refreshTokenUser');
-    req.flash('error', 'Vui lòng đăng nhập để tiếp tục');
+    req.flash('error', 'Login required!');
     return res.redirect('/auth/login');
   }
 
@@ -19,13 +19,13 @@ module.exports.requiredAuth = async (req, res, next) => {
       _id: data.id,
       refreshToken: refreshTokenUser,
       deleted: false,
-      status: 'active'
+      statusAccount: 'active'
     }).select('-password -refreshToken -deleted -createdAt -updatedAt -__v').lean();
 
     if (!user) {
       res.clearCookie('accessTokenUser');
       res.clearCookie('refreshTokenUser');
-      req.flash('error', 'Vui lòng đăng nhập để tiếp tục');
+      req.flash('error', 'Login required!');
       return res.redirect('/auth/login');
     }
 
@@ -41,13 +41,15 @@ module.exports.requiredAuth = async (req, res, next) => {
       
       const user = await User.findOne
       ({
-        _id: data.id
+        _id: data.id,
+        deleted: false,
+        statusAccount: 'active'
       });
 
       if (!user) {
         res.clearCookie('accessTokenUser');
         res.clearCookie('refreshTokenUser');
-        req.flash('error', 'Vui lòng đăng nhập để tiếp tục');
+        req.flash('error', 'Login required!');
         return res.redirect('/auth/login');
       }
 
@@ -71,7 +73,7 @@ module.exports.requiredAuth = async (req, res, next) => {
     } catch (error) {
       res.clearCookie('accessTokenUser');
       res.clearCookie('refreshTokenUser');
-      req.flash('error', 'Vui lòng đăng nhập để tiếp tục');
+      req.flash('error', 'Login required!');
       res.redirect('/auth/login');
     }
   }

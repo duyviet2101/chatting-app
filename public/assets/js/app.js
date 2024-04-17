@@ -460,4 +460,37 @@ const showAlert = () => {
 showAlert();
 //! end show alert
 
+//! hash active tab
+document.addEventListener('DOMContentLoaded', function() {
+  function activateTabFromHash() {
+      var hash = window.location.hash;
+      const tabActive = document.querySelectorAll('.nav-link.active, .tab-pane.active');
+      var tab = document.querySelector(`.nav-link[data-bs-target='${hash}']`);
+      var tabPane = document.querySelector(hash);
+
+      if (hash && tabActive && tabActive.length > 0 && tab && tabPane) {
+          // Remove 'active' class from all tabs and tab panes
+          tabActive.forEach(function(element) {
+              element.classList.remove('active');
+              if (element.classList.contains('show')) {
+                  element.classList.remove('show');
+              }
+          });
+
+          // Add 'active' class to the tab and tab pane with the same hash
+          if (tab && tabPane) {
+              tab.classList.add('active');
+              tabPane.classList.add('active', 'show');
+          }
+      }
+  }
+
+  // Listen for hashchange event
+  window.addEventListener('hashchange', activateTabFromHash);
+
+  // Activate tab from hash when the page loads
+  activateTabFromHash();
+});
+//! end hash active tab
+
 //end-js

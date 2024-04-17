@@ -1,4 +1,10 @@
 const mongoose = require('mongoose');
+const slug = require('mongoose-slug-updater');
+mongoose.plugin(slug, {
+  separator: '_',
+  lang: 'en',
+  truncate: 20
+});
 
 const UserSchema = mongoose.Schema({
   fullName: String,
@@ -8,12 +14,32 @@ const UserSchema = mongoose.Schema({
     type: String,
     default: null,
   },
+  username: {
+    type: String,
+    unique: true,
+    slug: 'fullName',
+  },
   phone: String,
   avatar: {
     type: String,
     default: "https://avatar.iran.liara.run/public",
   },
-  friendList: [
+  cover: {
+    type: String,
+    default: "",
+  },
+  bio: {
+    type: String,
+    default: '',
+  },
+  verified: {
+    type: Boolean,
+    default: false,
+  },
+  gender: {
+    type: String
+  },
+  contactList: [
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -22,10 +48,32 @@ const UserSchema = mongoose.Schema({
       room_chat_id: String
     }
   ],
-  acceptFriends: Array,
-  requestFriends: Array,
+  contactRequestsReceived: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      room_chat_id: String
+    }
+  ],
+  contactRequestsSent: [
+    {
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },
+      room_chat_id: String
+    }
+  ],
+  groups: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Group'
+    }
+  ],
   statusOnline: String,
-  status: {
+  statusAccount: {
     type: String,
     default: 'active'
   },

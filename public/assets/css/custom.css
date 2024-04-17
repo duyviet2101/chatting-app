@@ -36,3 +36,9 @@
 }
 
 /* End Show Alert */
+
+/*! custom */
+*:focus-visible {
+  outline: none;
+}
+/*! end custom */

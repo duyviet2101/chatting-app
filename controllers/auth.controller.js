@@ -24,7 +24,7 @@ module.exports.postRegister = async (req, res, next) => {
   const { fullName, email, password } = req.body;
   
   if (!email || !password || !fullName) {
-    req.flash("error", "Vui lòng điền đầy đủ thông tin!");
+    req.flash("error", "Fill in all fields!");
     return res.redirect("back");
   }
 
@@ -33,7 +33,7 @@ module.exports.postRegister = async (req, res, next) => {
   });
 
   if (user) {
-    req.flash("error", "Email đã tồn tại!");
+    req.flash("error", "Email exists!");
     return res.redirect("back");
   }
 
@@ -43,11 +43,12 @@ module.exports.postRegister = async (req, res, next) => {
     fullName: fullName,
     email: email,
     password: hasedPassword,
+    avatar: `https://avatar.iran.liara.run/username?username=${fullName.split(' ')[0] + '+' + fullName.split(' ')[fullName.split(' ').length - 1]}`,
   });
 
   await newUser.save();
 
-  req.flash("success", "Đăng ký thành công!");
+  req.flash("success", "Register successed!");
   res.redirect("/auth/login");
 }
 
@@ -57,17 +58,17 @@ module.exports.postLogin = async (req, res, next) => {
   const user = await User.findOne({ 
     email: email,
     deleted: false ,
-    status: 'active'
+    statusAccount: 'active'
   });
   
   if (!user) {
-    req.flash('error', 'Email không tồn tại hoặc tài khoản đã bị khóa!');
+    req.flash('error', "Email does's exist or locked!");
     return res.redirect("back");
   }
 
   const checkPassword = await bcrypt.compare(password, user.password);
   if (!checkPassword) {
-    req.flash('error', 'Mật khẩu không đúng!');
+    req.flash('error', 'Wrong password!');
     return res.redirect("back");
   }
 

@@ -9,5 +9,6 @@ router.use('/auth', require('./auth.route.js'));
 
 router.use('/messages', requiredAuth, require('./messages.route.js'));
 
+router.use('/user', requiredAuth, require('./user.route.js'));
 
 module.exports = router;
