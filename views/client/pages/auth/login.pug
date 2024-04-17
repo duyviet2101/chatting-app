@@ -26,19 +26,19 @@ head
           .card.border-0
             .p-4
               h3 Login
-              form.row.g-3(action='/login' method='POST')
+              form.row.g-3(action='/auth/login' method='POST')
                 .col-12
                   .form-group
                     label.form-label(for='email-address') Email Address
                     .form-control-wrap
-                      input#email-address.form-control(type='text' placeholder='youremail@example.com' required)
+                      input#email-address.form-control(type='email' name="email" placeholder='youremail@example.com' required)
                 .col-12
                   .form-group
                     label.form-label.d-flex(for='password')
                       | Password 
                       a.link.link-primary.ms-auto(href='/auth/forgot') Forgot password?
                     .form-control-wrap
-                      input#password.form-control(type='password' placeholder='password' required)
+                      input#password.form-control(type='password' name="password" placeholder='password' required)
                 .col-12
                   button.btn.btn-primary.w-100(type="submit") Login
               // .row
