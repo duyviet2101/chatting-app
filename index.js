@@ -2,6 +2,9 @@ const express = require('express');
 require('dotenv').config();
 const morgan = require('morgan');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const flash = require('express-flash');
 
 
 const app = express();
@@ -22,6 +25,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 //! end view, static files
+
+//! flash
+app.use(cookieParser((process.env.SECRET_KEY_COOKIE)));
+app.use(session({ cookie: { maxAge: 60000 }}));
+app.use(flash());
+// app.use((req, res, next) => {
+//     res.locals.success = req.flash('success');
+//     res.locals.error = req.flash('error');
+//     next();
+// });
+//! end flash
 
 //! routes
 app.use(require('./routes/index.route.js'))

@@ -416,4 +416,48 @@
 return TynApp;
 })(TynApp);
 
+//! register form 
+const registerForm = document.querySelector('[register-form]');
+if (registerForm) {
+  registerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const password = registerForm.querySelector('#password').value;
+    const repeatPassword = registerForm.querySelector('#repeat-password').value;
+
+    if (password !== repeatPassword) {
+      alert('Password not match');
+      return;
+    }
+
+    const privacyTermAgree = registerForm.querySelector('#privacy-term-agree');
+
+    if (!privacyTermAgree.checked) {
+      alert('Please agree to our privacy policy');
+      return;
+    }
+
+    registerForm.submit();
+  })
+}
+//! end register form 
+
+//! show alert
+const showAlert = () => {
+  const alert = document.querySelector("[show-alert]");
+  if (alert) {
+    const time = parseInt(alert.getAttribute("data-time")) || 3000;
+    const closeAlert = alert.querySelector("[close-alert]");
+
+    setTimeout(() => {
+      alert.classList.add("alert-hidden")
+    }, time);
+
+    closeAlert.addEventListener("click", () => {
+      alert.classList.add("alert-hidden")
+    })
+  }
+}
+showAlert();
+//! end show alert
+
 //end-js

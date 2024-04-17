@@ -1,3 +1,5 @@
+include ../mixins/alert.pug
+
 doctype html
 head
   meta(charset='UTF-8')
@@ -7,8 +9,10 @@ head
   title #{pageTitle}
   link(rel='stylesheet' href='/assets/css/bundle.css?v131')
   link(rel='stylesheet' href='/assets/css/app.css?v131')
+  link(rel="stylesheet", href="/assets/css/custom.css")
 .tyn-root
-
+  +alert-success(5000)
+  +alert-error(5000)
   include ../partials/navbar.pug
 
   .tyn-content.tyn-content-full-height.tyn-chat.has-aside-base
