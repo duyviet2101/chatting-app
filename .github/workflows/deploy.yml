@@ -1,4 +1,4 @@
-name: Deploy backend scoreUp to Server
+name: Deploy to ec2
 
 on:
   push:
