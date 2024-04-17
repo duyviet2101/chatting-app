@@ -8,7 +8,7 @@ nav.tyn-appbar
     // tyn-logo
     .tyn-appbar-content
       ul.tyn-appbar-nav.tyn-appbar-nav-start
-        li.tyn-appbar-item
+        li.tyn-appbar-item(class=`${activeTab === 'messages' ? 'active current-page' : ''}`)
           a.tyn-appbar-link(href='/')
             // chat-text-fill
             svg.bi.bi-chat-text-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
@@ -302,7 +302,7 @@ nav.tyn-appbar
                   span Change Password
               li.dropdown-divider
               li
-                a(href='login.html')
+                a(href='/auth/logout')
                   // power
                   svg.bi.bi-power(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                     path(d='M7.5 1v7h1V1z')
