@@ -22,7 +22,8 @@ block main
           li.nav-item
             button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-request-sent' type='button')  Sent #{contactRequestsSent.length > 0 ? `(${contactRequestsSent.length})` : ""}
           li.nav-item
-            button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-request-received' type='button')  Received #{contactRequestsReceived.length > 0 ? `(${contactRequestsReceived.length})` : ""}
+            button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-request-received' type='button')  Received 
+              span.count-request-pane #{contactRequestsReceived.length > 0 ? `(${contactRequestsReceived.length})` : ""}
           li.nav-item
             button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-blocked' type='button')  Blocked 
         // .nav
@@ -116,7 +117,7 @@ block main
           #contact-request-sent.tab-pane.url-triggered(tabindex='0' role='tabpanel')
             ul.tyn-aside-list
               each contact, index in contactRequestsSent
-                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
+                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.username == username ? "active" : "") : (index === 0 ? 'active' : '')}` data-username=contact.username)
                   .tyn-media-group
                     .tyn-media.tyn-size-lg
                       img(src=contact.avatar alt='')
@@ -140,7 +141,7 @@ block main
           #contact-request-received.tab-pane.url-triggered(tabindex='0' role='tabpanel')
             ul.tyn-aside-list
               each contact, index in contactRequestsReceived
-                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
+                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.username == username ? "active" : "") : (index === 0 ? 'active' : '')}` data-username=contact.username)
                   .tyn-media-group
                     .tyn-media.tyn-size-lg
                       img(src=contact.avatar alt='')

@@ -43,7 +43,7 @@ nav.tyn-appbar
             .dropdown-gap
               ul.tyn-media-list.gap.gap-3.request-list
                 each requestContact in user.contactRequestsReceived
-                  li
+                  li(data-username=requestContact.username)
                     .tyn-media-group.align-items-start
                       .tyn-media.tyn-circle
                         img(src=requestContact.avatar alt=requestContact.fullName)
