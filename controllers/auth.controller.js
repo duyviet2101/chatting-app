@@ -110,13 +110,13 @@ module.exports.postLogin = async (req, res, next) => {
 
   res.cookie('accessTokenUser', accessToken, {
     maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: true
+    // httpOnly: true
   });
 
   res.cookie('refreshTokenUser', refreshToken, {
     maxAge: 7 * 24 * 60 * 60 * 1000 ,
     // maxAge: 60 * 60 * 1000,
-    httpOnly: true
+    // httpOnly: true
   });
 
   res.redirect(`/messages`);

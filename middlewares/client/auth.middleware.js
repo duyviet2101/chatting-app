@@ -69,7 +69,7 @@ module.exports.requiredAuth = async (req, res, next) => {
 
       res.cookie('accessTokenUser', newAccessTokenUser, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
-        httpOnly: true
+        // httpOnly: true
       });
 
       next();

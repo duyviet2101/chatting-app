@@ -528,46 +528,4 @@ if (updateImageTrigger && updateImageTrigger.length > 0) {
 }
 //! end .update-image-trigger
 
-//! select contact profile
-const contactProfileBtn = document.querySelectorAll('[contact-profile-btn]');
-if (contactProfileBtn && contactProfileBtn.length > 0) {
-  contactProfileBtn.forEach(item => {
-    item.addEventListener('click', (e) => {
-      const target = document.querySelector('#tynMain');
-      if (target) {
-        const data = JSON.parse(item.getAttribute('data-contact-profile'));
-        console.log(data);
-        const avatar = target.querySelector('.tyn-profile-avatar img');
-        avatar.src = data.avatar;
-
-        const cover = target.querySelector('.tyn-profile-cover img');
-        if (cover && data.cover) {
-          cover.src = data.cover;
-        }
-
-        const name = target.querySelector('.name');
-        name.innerText = data.fullName;
-
-        const contacts = target.querySelector('.contacts');
-        contacts.innerText = data.contactList.length + " Contacts";
-
-        const groups = target.querySelector('.groups');
-        groups.innerText = data.groups.length + " Groups";
-
-        const contactsListAvatar = target.querySelector('.contacts-list-avatar');
-        contactsListAvatar.innerHTML = '';
-        data.contactList.forEach(contact => {
-          const div = document.createElement('div');
-          div.classList.add('tyn-media', 'tyn-circle', 'tyn-size-md', 'tyn-media-bordered');
-          div.innerHTML = `
-              <img src=${contact.user.avatar} alt=${contact.user.fullName}>
-          `;
-          contactsListAvatar.appendChild(div);
-        })
-      }
-    })
-  })
-}
-//! end select contact profile
-
 //end-js

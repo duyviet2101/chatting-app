@@ -41,7 +41,7 @@ block main
           #contact-all.tab-pane.show.active(tabindex='0' role='tabpanel')
             ul.tyn-aside-list
               each contact, index in contactList
-                li.tyn-aside-item.js-toggle-main(class=`${index === 0 ? 'active' : ''}`)
+                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.user.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
                   .tyn-media-group
                     .tyn-media.tyn-size-lg
                       img(src=contact.user.avatar alt='')
@@ -101,7 +101,7 @@ block main
                         .tyn-media-row
                           p.content @#{contact.username}
                       .tyn-media-option.tyn-aside-item-option
-                        button.btn.btn-icon.btn-light.btn-md.btn-pill(send-request data-path=`/contacts/add/${contact.username}`)
+                        button.btn.btn-icon.btn-light.btn-md.btn-pill(send-request data-username=`${contact.username}`)
                           // person-plus-fill
                           svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                             path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
@@ -115,7 +115,7 @@ block main
           #contact-new.tab-pane(tabindex='0' role='tabpanel')
             ul.tyn-aside-list
               each contact, index in recentContactList
-                li.tyn-aside-item.js-toggle-main(class=`${index === 0 ? 'active' : ''}`)
+                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.user.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
                   .tyn-media-group
                     .tyn-media.tyn-size-lg
                       img(src=contact.user.avatar alt='')
@@ -164,7 +164,7 @@ block main
           #contact-favorites.tab-pane(tabindex='0' role='tabpanel')
             ul.tyn-aside-list
               each contact, index in favoriteList
-                li.tyn-aside-item.js-toggle-main(class=`${index === 0 ? 'active' : ''}`)
+                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.user.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
                   .tyn-media-group
                     .tyn-media.tyn-size-lg
                       img(src=contact.user.avatar alt='')
@@ -213,11 +213,11 @@ block main
           #contact-blocked.tab-pane(tabindex='0' role='tabpanel')
             ul.tyn-aside-list
               each contact, index in contactBlocked
-                li.tyn-aside-item.js-toggle-main(class=`${index === 0 ? 'active' : ''}`)
+                li.tyn-aside-item.js-toggle-main
                   .tyn-media-group
                     .tyn-media.tyn-size-lg
                       img(src=contact.avatar alt='')
-                    .tyn-media-col(onclick=`window.location.href='/contacts/profile/${contact.username}'`)
+                    .tyn-media-col
                       .tyn-media-row
                         h6.name #{contact.fullName}
                       .tyn-media-row
@@ -247,7 +247,7 @@ block main
         // .tab-content
       // .tyn-aside-body
     // .tyn-aside
-    #tynMain.tyn-main.tyn-content-inner
+    #tynMain.tyn-main.tyn-content-inner.main-shown
       .container
         .tyn-profile
           ul.tyn-list-inline.d-md-none.translate-middle.position-absolute.start-50.z-1
@@ -291,9 +291,11 @@ block main
                               span Message
                     - if (!check)
                         .tyn-media-multiple
-                          btn.btn.btn-primary(send-request data-path=`/contacts/add/${displayContact.username}`)
-                            svg.bi.bi-plus-lg(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                              path(fill-rule='evenodd' d='M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2')
+                          btn.btn.btn-primary(send-request data-username=`${displayContact.username}`)
+                            // person-plus-fill
+                            svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                              path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
+                              path(fill-rule='evenodd' d='M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5')
                             span Add
                   //- .tyn-media-row
               // .tyn-media-group
@@ -380,6 +382,18 @@ block main
                           | #{contact.user.fullName}
                       // team-item
                     // .col
+                  else
+                    .col-12
+                      .tyn-empty-state
+                        .tyn-empty-state-inner
+                          .tyn-empty-state-icon
+                          h4.tyn-empty-state-title No Mutual Contacts
+                          p.tyn-empty-state-content
+                            | You don't have any mutual contacts with
+                            | #{displayContact.fullName}
+                        // .tyn-empty-state-inner
+                      // .tyn-empty-state
+                    // .col
                 // .row
               // .tab-pane
             // .tab-content
@@ -415,7 +429,7 @@ block modals
                         | #{contact.username}
                   ul.tyn-media-option-list.me-n1
                     li.dropdown
-                      button.btn.btn-icon.btn-white.btn-pill
+                      button.btn.btn-icon.btn-white.btn-pill(send-request data-username=`${contact.username}`)
                         // person-plus-fill
                         svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                           path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')

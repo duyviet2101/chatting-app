@@ -16,12 +16,13 @@ const port = process.env.PORT || 3066;
 const server = createServer(app);
 const io = new Server(server);
 global._io = io;
+global._io.use(require('./middlewares/client/socketAuth.middleware.js'));
 //! end socket io
 
 //! middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 app.use(cookieParser((process.env.SECRET_KEY_COOKIE)));
 app.use(session({
   secret: process.env.SECRET_KEY_SESSION,
