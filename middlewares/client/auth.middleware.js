@@ -20,7 +20,12 @@ module.exports.requiredAuth = async (req, res, next) => {
       refreshToken: refreshTokenUser,
       deleted: false,
       statusAccount: 'active'
-    }).select('-password -refreshToken -deleted -createdAt -updatedAt -__v').lean();
+    }).select('-password -refreshToken -deleted -createdAt -updatedAt -__v')
+      .populate({
+        path: 'contactRequestsReceived',
+        select: 'fullName username avatar'
+      })
+      .lean();
 
     if (!user) {
       res.clearCookie('accessTokenUser');

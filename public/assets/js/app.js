@@ -458,31 +458,85 @@ const showAlert = () => {
   }
 }
 showAlert();
-//! end show alert
 
+const createAlertSuccess = (message) => {
+  // ! alert
+  const alert = document.createElement("div");
+  alert.classList.add("alert", "alert-success");
+  alert.setAttribute("role", "alert");
+  alert.setAttribute("show-alert", "");
+  alert.innerHTML = `${message} <span close-alert>X</span>`;
+  const closeAlert = alert.querySelector("[close-alert]");
+  document.body.appendChild(alert);
+  setTimeout(() => {
+      alert.classList.add("alert-hidden")
+  }, 5000);
+  closeAlert.addEventListener("click", () => {
+      alert.classList.add("alert-hidden")
+  })
+  // ! end alert
+}
+
+const createAlertError = (message) => {
+  // ! alert
+  const alert = document.createElement("div");
+  alert.classList.add("alert", "alert-danger");
+  alert.setAttribute("show-alert", "");
+  alert.setAttribute("role", "alert");
+  alert.innerHTML = `${message} <span close-alert>X</span>`;
+  const closeAlert = alert.querySelector("[close-alert]");
+  document.body.appendChild(alert);
+  setTimeout(() => {
+      alert.classList.add("alert-hidden")
+  }, 5000);
+  closeAlert.addEventListener("click", () => {
+      alert.classList.add("alert-hidden")
+  })
+  // ! end alert
+}
+
+const createAlertNotice = (message) => {
+  // ! alert
+  const alert = document.createElement("div");
+  alert.classList.add("alert", "alert-primary");
+  alert.setAttribute("show-alert", "");
+  alert.setAttribute("role", "alert");
+  alert.innerHTML = `${message} <span close-alert>X</span>`;
+  const closeAlert = alert.querySelector("[close-alert]");
+  document.body.appendChild(alert);
+  setTimeout(() => {
+      alert.classList.add("alert-hidden")
+  }, 5000);
+  closeAlert.addEventListener("click", () => {
+      alert.classList.add("alert-hidden")
+  })
+  // ! end alert
+}
+
+//! end show alert
 //! hash active tab
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   function activateTabFromHash() {
-      var hash = window.location.hash;
-      const tabActive = document.querySelectorAll('.nav-link.active, .tab-pane.active');
-      
-      if (hash && tabActive && tabActive.length > 0) {
-        // Remove 'active' class from all tabs and tab panes
-        tabActive.forEach(function(element) {
-          element.classList.remove('active');
-          if (element.classList.contains('show')) {
-            element.classList.remove('show');
-          }
-        });
-        
-          var tab = document.querySelector(`.nav-link[data-bs-target='${hash}']`);
-          var tabPane = document.querySelector(hash);
-          // Add 'active' class to the tab and tab pane with the same hash
-          if (tab && tabPane) {
-              tab.classList.add('active');
-              tabPane.classList.add('active', 'show');
-          }
+    var hash = window.location.hash;
+    const tabActive = document.querySelectorAll('.nav-link.active.url-triggered, .tab-pane.active.url-triggered');
+
+    if (hash && tabActive && tabActive.length > 0) {
+      // Remove 'active' class from all tabs and tab panes
+      tabActive.forEach(function (element) {
+        element.classList.remove('active');
+        if (element.classList.contains('show')) {
+          element.classList.remove('show');
+        }
+      });
+
+      var tab = document.querySelector(`.nav-link.url-triggered[data-bs-target='${hash}']`);
+      var tabPane = document.querySelector(hash);
+      // Add 'active' class to the tab and tab pane with the same hash
+      if (tab && tabPane) {
+        tab.classList.add('active');
+        tabPane.classList.add('active', 'show');
       }
+    }
   }
 
   // Listen for hashchange event
@@ -503,7 +557,7 @@ if (updateImageTrigger && updateImageTrigger.length > 0) {
       targetElement.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
           const img = item.parentNode.querySelector('img');
           if (img) {
             img.src = reader.result;

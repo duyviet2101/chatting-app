@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const contactsController = require('../../controllers/contacts.controller.js');
+const asyncHandler = require('../../helpers/handleError.js');
 
-router.get('/', contactsController.index);
+router.get('/', asyncHandler(contactsController.index));
 
-router.get('/profile/:username', contactsController.profile);
+router.get('/profile/:username', asyncHandler(contactsController.profile));
 
 module.exports = router;

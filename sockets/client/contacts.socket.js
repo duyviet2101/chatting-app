@@ -16,7 +16,54 @@ module.exports = async (req, res) => {
     
     //! user send request contact
     socket.on('CLIENT_SEND_REQUEST_CONTACT', async (username) => {
-      console.log('CLIENT_SEND_REQUEST_CONTACT::: ', username);
+      const userA = await User.findOne({ // current User
+        _id: req.user._id,
+        deleted: false,
+        statusAccount: 'active'
+      });
+
+      const userB = await User.findOne({ // user recive request
+        username: username,
+        deleted: false,
+        statusAccount: 'active',
+        contactBlocked: {
+          $ne: userA._id
+        }
+      });
+
+      if (!userA || !userB) {
+        return;
+      }
+
+      if (userA.contactRequestsSent.includes(userB._id) || userB.contactRequestsReceived.includes(userA._id)) {
+        return;
+      }
+
+      userA.contactRequestsSent.push(userB._id);
+      userB.contactRequestsReceived.push(userA._id);
+
+      await userA.save();
+      await userB.save();
+
+      //? emit updated length contactRequestsReceived to userB
+      const lengthContactRequestsReceived = userB.contactRequestsReceived.length;
+      socket.broadcast.emit('SERVER_RETURN_LENGTH_REQUESTS_RECEIVED', {
+        userId: userB._id,
+        lengthContactRequestsReceived
+      });
+
+      //? emit info user A to user B
+      const infoUserA = {
+        _id: userA._id,
+        username: userA.username,
+        fullName: userA.fullName,
+        avatar: userA.avatar
+      };
+      socket.broadcast.emit('SERVER_RETURN_INFO_REQUEST_RECEIVED', {
+        userId: userB._id,
+        infoUserA
+      });
+
     });
     //! end user send request contact
 

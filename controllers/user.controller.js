@@ -31,6 +31,15 @@ module.exports.postEditProfile = async (req, res, next) => {
     return res.redirect('/user/profile');
   }
 
+  const emailExist = await User.findOne({
+    email
+  });
+
+  if (emailExist && emailExist._id.toString() !== req.user._id.toString()) {
+    req.flash('error', 'Email already exist!');
+    return res.redirect('/user/profile');
+  }
+
   const user = await User.findById(req.user._id);
 
   user.fullName = fullName;

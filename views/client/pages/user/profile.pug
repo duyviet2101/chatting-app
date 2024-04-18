@@ -36,15 +36,15 @@ block main
           .tyn-profile-nav
             ul.nav.nav-tabs.nav-tabs-line
               li.nav-item
-                button.nav-link.active(data-bs-toggle='tab' data-bs-target='#profile-edit' type='button')  Edit Profile 
+                button.nav-link.url-triggered.active(data-bs-toggle='tab' data-bs-target='#profile-edit' type='button')  Edit Profile 
               li.nav-item
-                button.nav-link(data-bs-toggle='tab' data-bs-target='#change-password' type='button')  Change Password
+                button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#change-password' type='button')  Change Password
               li.nav-item
-                button.nav-link(data-bs-toggle='tab' data-bs-target='#profile-settings' type='button')  Profile Settings
+                button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#profile-settings' type='button')  Profile Settings
           // .tyn-profile-nav
           .tyn-profile-details
             .tab-content
-              form#profile-edit.tab-pane.show.active(tabindex='0' action='/user/profile/edit?_method=PATCH' method='POST' enctype='multipart/form-data')
+              form#profile-edit.tab-pane.url-triggered.show.active(tabindex='0' action='/user/profile/edit?_method=PATCH' method='POST' enctype='multipart/form-data')
                 .row.gy-5
                   // input avatar, cover
                   input#avatar.form-control.d-none(name="avatar" type='file' accept='image/*')
@@ -59,7 +59,6 @@ block main
                         .row.gy-4.justify-content-end
                           .col-12
                             .form-group
-                              label.form-label(for='bio') Bio
                               .form-control-wrap
                                 textarea#bio.form-control(name="bio" placeholder='Your Bio' rows='4') #{user.bio}
                   .col-12
@@ -165,7 +164,7 @@ block main
                     // .row
                   // .col
                 // .row
-              form#change-password.tab-pane(tabindex='0' action='/auth/change-password?_method=PATCH' method='POST')
+              form#change-password.tab-pane.url-triggered(tabindex='0' action='/auth/change-password?_method=PATCH' method='POST')
                 .row.gy-5
                   .col-12
                     .row.gy-4
@@ -201,7 +200,7 @@ block main
                   // .col
                 // .row
               // .tab-pane
-              #profile-settings.tab-pane(tabindex='0')
+              #profile-settings.tab-pane.url-triggered(tabindex='0')
                 .row.gy-5
                   .col-12
                     .row.gy-4

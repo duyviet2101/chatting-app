@@ -24,54 +24,56 @@ nav.tyn-appbar
         // .tyn-appbar-item
       // .tyn-appbar-nav
       ul.tyn-appbar-nav.tyn-appbar-nav-end
-        li.tyn-appbar-item
-          a.tyn-appbar-link.dropdown-toggle(data-bs-toggle='dropdown' href='#' data-bs-offset='0,10' data-bs-auto-close='outside')
+        li.tyn-appbar-item(notifications)
+          a.tyn-appbar-link.dropdown-toggle.position-relative(data-bs-toggle='dropdown' href='#' data-bs-offset='0,10' data-bs-auto-close='outside')
             // app-indicator
             svg.bi.bi-app-indicator(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
               path(d='M5.5 2A3.5 3.5 0 0 0 2 5.5v5A3.5 3.5 0 0 0 5.5 14h5a3.5 3.5 0 0 0 3.5-3.5V8a.5.5 0 0 1 1 0v2.5a4.5 4.5 0 0 1-4.5 4.5h-5A4.5 4.5 0 0 1 1 10.5v-5A4.5 4.5 0 0 1 5.5 1H8a.5.5 0 0 1 0 1z')
               path(d='M16 3a3 3 0 1 1-6 0 3 3 0 0 1 6 0')
-            span.d-none Notifications
+            .count-request.badge.bg-danger
+              | #{user.contactRequestsReceived.length}
           .dropdown-menu.dropdown-menu-rg.dropdown-menu-end
             .dropdown-head
               .title
                 h6 Notifications
               ul.nav.nav-tabs.nav-tabs-line
                 li.nav-item
-                  button.nav-link(data-bs-toggle='tab' data-bs-target='#notifications-unread' type='button')  Unread 
-                li.nav-item
                   button.nav-link.active(data-bs-toggle='tab' data-bs-target='#notifications-all' type='button')  All 
             // .dropdown-head
             .dropdown-gap
-              ul.tyn-media-list.gap.gap-3
-                li
-                  .tyn-media-group.align-items-start
-                    .tyn-media.tyn-circle
-                      img(src='/images/avatar/3.jpg' alt='')
-                    .tyn-media-col
-                      .tyn-media-row
-                        span.message
-                          strong Thomas Poulain
-                          |  Added You
-                      .tyn-media-row.has-dot-sap
-                        span.meta 1 weeks ago
-                      .tyn-media-row
-                        ul.tyn-btn-inline.gap.gap-3.pt-1
-                          li
-                            button.btn.btn-md.btn-primary
-                              // check2-circle
-                              svg.bi.bi-check2-circle(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                path(d='M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0')
-                                path(d='M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z')
-                              span Accept
-                          li
-                            button.btn.btn-md.btn-light
-                              // x-circle
-                              svg.bi.bi-x-circle(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                path(d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16')
-                                path(d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708')
-                              span Reject
-                  // .tyn-media-group
-                // li
+              ul.tyn-media-list.gap.gap-3.request-list
+                each requestContact in user.contactRequestsReceived
+                  li
+                    .tyn-media-group.align-items-start
+                      .tyn-media.tyn-circle
+                        img(src=requestContact.avatar alt=requestContact.fullName)
+                      .tyn-media-col
+                        .tyn-media-row
+                          span.message
+                            strong #{requestContact.fullName}
+                            |  Added You
+                        .tyn-media-row
+                          ul.tyn-btn-inline.gap.gap-3.pt-1
+                            li
+                              button.btn.btn-md.btn-primary(accept-request data-username=requestContact.username)
+                                // check2-circle
+                                svg.bi.bi-check2-circle(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                  path(d='M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0')
+                                  path(d='M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z')
+                                span Accept
+                            li
+                              button.btn.btn-md.btn-light(reject-request data-username=requestContact.username)
+                                // x-circle
+                                svg.bi.bi-x-circle(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                  path(d='M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16')
+                                  path(d='M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708')
+                                span Reject
+                    // .tyn-media-group
+                  // li
+                else
+                  li.no-noti
+                    span.message
+                      | No new notifications
               // .tyn-media-list
             // .dropdown-gap
           // .dropdown-menu

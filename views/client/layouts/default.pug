@@ -480,6 +480,8 @@ head
   // .modal-dialog
 // .modal
 block modals
+script(data-user=JSON.stringify(user)).
+  window.user = JSON.parse(document.currentScript.getAttribute('data-user'));
 script(src='/assets/js/bundle.js?v131')
 script(src='/assets/js/app.js?v131')
 script(src="/socket.io/socket.io.js")
