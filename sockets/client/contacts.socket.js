@@ -221,6 +221,20 @@ module.exports = async (req, res) => {
         lengthContactRequestsSent
       });
 
+      //? emit length contactList to userA
+      const lengthContactListA = userA.contactList.length;
+      socket.emit('SERVER_RETURN_LENGTH_CONTACT_LIST', {
+        userId: userA._id,
+        lengthContactList: lengthContactListA
+      });
+
+      //? emit length contactList to userB
+      const lengthContactListB = userB.contactList.length;
+      socket.broadcast.emit('SERVER_RETURN_LENGTH_CONTACT_LIST', {
+        userId: userB._id,
+        lengthContactList: lengthContactListB
+      });
+
       //? emit info user A to user B
       const infoUserA = {
         _id: userA._id,
@@ -252,5 +266,61 @@ module.exports = async (req, res) => {
       });
     });
     //! end user accept request contact
+
+    //! user remove contact
+    socket.on('CLIENT_REMOVE_CONTACT', async (username) => {
+      const userA = await User.findOne({ // User want to remove contact
+        _id: req.user._id,
+        deleted: false,
+        statusAccount: 'active'
+      });
+
+      const userB = await User.findOne({ // user removed
+        username: username,
+        deleted: false,
+        statusAccount: 'active',
+      });
+
+      if (!userA || !userB) {
+        return;
+      }
+
+      if (!userA.contactList.some(contact => contact.user.toString() === userB._id.toString()) || !userB.contactList.some(contact => contact.user.toString() === userA._id.toString())) {
+        return;
+      }
+
+      userA.contactList = userA.contactList.filter(contact => contact.user.toString() !== userB._id.toString());
+      userB.contactList = userB.contactList.filter(contact => contact.user.toString() !== userA._id.toString());
+
+      await userA.save();
+      await userB.save();
+
+      //? emit length contactList to userA
+      const lengthContactListA = userA.contactList.length;
+      socket.emit('SERVER_RETURN_LENGTH_CONTACT_LIST', {
+        userId: userA._id,
+        lengthContactList: lengthContactListA
+      });
+
+      //? emit length contactList to userB
+      const lengthContactListB = userB.contactList.length;
+      socket.broadcast.emit('SERVER_RETURN_LENGTH_CONTACT_LIST', {
+        userId: userB._id,
+        lengthContactList: lengthContactListB
+      });
+
+      //? emit remove contact to userA
+      socket.emit('SERVER_RETURN_REMOVE_CONTACT', {
+        userId: userA._id,
+        username: userB.username
+      });
+
+      //? emit remove contact to userB
+      socket.broadcast.emit('SERVER_RETURN_REMOVE_CONTACT', {
+        userId: userB._id,
+        username: userA.username
+      });
+    });
+    //! end user remove contact
   });
 }

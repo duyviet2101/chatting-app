@@ -6,7 +6,8 @@ block main
       .tyn-aside-head
         .tyn-aside-head-text
           h3.tyn-aside-title.tyn-title Contacts
-          span.tyn-subtext #{contactList.length} contacts
+          span.tyn-subtext.count-contact-aside #{contactList.length} 
+          span.tyn-subtext contacts
         .tyn-aside-head-tools
           ul.tyn-list-inline.gap.gap-3
             li
@@ -25,7 +26,7 @@ block main
           li.nav-item
             button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-request-received' type='button')  Received 
               span.count-request-pane #{contactRequestsReceived.length > 0 ? `(${contactRequestsReceived.length})` : ""}
-          li.nav-item
+          //- li.nav-item
             button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-blocked' type='button')  Blocked 
         // .nav
       // .tyn-aside-row
@@ -76,12 +77,12 @@ block main
                                   span Send Message
                               li.dropdown-divider
                               li
-                                a(href=`/contacts/block/${contact.user.username}`)
+                                a(href="#" remove-contact data-username=contact.user.username)
                                   // person-x
                                   svg.bi.bi-person-x(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                                     path(d='M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m.256 7a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z')
                                     path(d='M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708')
-                                  span Block
+                                  span Remove Contact
                             // .tyn-list-links
                           // .dropdown-menu
                       // .tyn-media-option-list
@@ -95,7 +96,7 @@ block main
               hr.mt-3.mb-3
               h5.text-center.mt-0.mb-0 Recommeded contacts
               each contact, index in recommendedAddContact
-                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
+                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.username == username ? "active" : "") : ""}`)
                   .tyn-media-group
                     .tyn-media.tyn-size-lg
                       img(src=contact.avatar alt='')
@@ -170,7 +171,7 @@ block main
                 // .tyn-aside-item
             // .tyn-aside-list
           // .tab-pane
-          #contact-blocked.tab-pane.url-triggered(tabindex='0' role='tabpanel')
+          //- #contact-blocked.tab-pane.url-triggered(tabindex='0' role='tabpanel')
             ul.tyn-aside-list
               each contact, index in contactBlocked
                 li.tyn-aside-item.js-toggle-main
