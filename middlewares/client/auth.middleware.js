@@ -64,6 +64,9 @@ module.exports.requiredAuth = async (req, res, next) => {
         // expiresIn: "30s"
       });
 
+      req.user = user;
+      res.locals.user = user;
+
       res.cookie('accessTokenUser', newAccessTokenUser, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true

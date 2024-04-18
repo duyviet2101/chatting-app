@@ -27,10 +27,11 @@ block main
                       | #{user.contactList.length} Contacts
                     span.meta #{user.groups.length} Groups
                   
-                  each contact in user.contactList
-                    .tyn-media-row.pt-2
-                      .tyn-media.tyn-circle.tyn-size-md.tyn-media-bordered
-                        img(src=`${contact.user.avatar}` alt=contact.user.fullName)
+                  .tyn-media-row.pt-2
+                    .tyn-media-multiple
+                      each contact in user.contactList
+                        .tyn-media.tyn-circle.tyn-size-md.tyn-media-bordered
+                          img(src=`${contact.user.avatar}` alt=contact.user.fullName)
           // .tyn-profile-head
           .tyn-profile-nav
             ul.nav.nav-tabs.nav-tabs-line

@@ -6,9 +6,17 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const flash = require('express-flash');
 const methodOverride = require('method-override');
+const { Server } = require('socket.io');
+const { createServer } = require('node:http');
 
 const app = express();
 const port = process.env.PORT || 3066;
+
+//! socket io
+const server = createServer(app);
+const io = new Server(server);
+global._io = io;
+//! end socket io
 
 //! middlewares
 app.use(express.json());
@@ -63,10 +71,11 @@ app.use((error, req, res, next) => {
   console.log(error);
   res.render('404', {
     message: error.message,
+    stack: error.stack
   })
 });
 //! end handle error
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port http://localhost:${port}`);
 });

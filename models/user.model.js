@@ -45,25 +45,30 @@ const UserSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
       },
-      room_chat_id: String
+      room_chat_id: String,
+      favorite: {
+        type: Boolean,
+        default: false
+      },
+      addedAt: Date
     }
   ],
   contactRequestsReceived: [
     {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-      },
-      room_chat_id: String
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     }
   ],
   contactRequestsSent: [
     {
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-      },
-      room_chat_id: String
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
+  contactBlocked: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
     }
   ],
   groups: [

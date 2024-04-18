@@ -11,4 +11,6 @@ router.use('/messages', requiredAuth, require('./messages.route.js'));
 
 router.use('/user', requiredAuth, require('./user.route.js'));
 
+router.use('/contacts', requiredAuth, require('./contacts.route.js'));
+
 module.exports = router;
