@@ -20,7 +20,8 @@ block main
           li.nav-item
             button.nav-link.url-triggered.active(data-bs-toggle='tab' data-bs-target='#contact-all' type='button')  All 
           li.nav-item
-            button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-request-sent' type='button')  Sent #{contactRequestsSent.length > 0 ? `(${contactRequestsSent.length})` : ""}
+            button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-request-sent' type='button')  Sent
+              span.count-request-sent-pane #{contactRequestsSent.length > 0 ? `(${contactRequestsSent.length})` : ""}
           li.nav-item
             button.nav-link.url-triggered(data-bs-toggle='tab' data-bs-target='#contact-request-received' type='button')  Received 
               span.count-request-pane #{contactRequestsReceived.length > 0 ? `(${contactRequestsReceived.length})` : ""}

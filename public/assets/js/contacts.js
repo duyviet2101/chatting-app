@@ -209,3 +209,77 @@ socket.on('SERVER_RETURN_INFO_CANCEL_REQUEST', data => {
   }
 });
 //! end SERVER_RETURN_INFO_CANCEL_REQUEST
+
+//! SERVER_RETURN_LENGTH_REQUESTS_SENT
+socket.on('SERVER_RETURN_LENGTH_REQUESTS_SENT', data => {
+  const {
+    userId,
+    lengthContactRequestsSent
+  } = data;
+  if (userId == window.user._id) {
+    const countRequestPane = document.querySelector('.count-request-sent-pane');
+    if (countRequestPane) {
+      if (lengthContactRequestsSent == 0)
+        countRequestPane.innerHTML = '';
+      else
+        countRequestPane.innerHTML = `(${lengthContactRequestsSent})`;
+    }
+  }
+});
+//! end SERVER_RETURN_LENGTH_REQUESTS_SENT
+
+//! SERVER_RETURN_INFO_REQUEST_SENT
+socket.on('SERVER_RETURN_INFO_REQUEST_SENT', data => {
+  const {
+    userId,
+    infoUserB
+  } = data;
+  if (userId == window.user._id) {
+    const requestListPane = document.querySelector('#contact-request-sent.tab-pane ul');
+    if (requestListPane) {
+      const firstLi = requestListPane.querySelector('li');
+
+      const li = document.createElement('li');
+      li.classList.add('tyn-aside-item', 'js-toggle-main');
+      li.setAttribute('data-username', infoUserB.username);
+      li.innerHTML = `
+        <div class="tyn-media-group">
+          <div class="tyn-media tyn-size-lg">
+            <img src="${ infoUserB.avatar }" alt="">
+          </div>
+          <div class="tyn-media-col" onclick="window.location.href='/contacts/profile/${ infoUserB.username }#contact-request-sent'">
+            <div class="tyn-media-row">
+              <h6 class="name">${ infoUserB.fullName }</h6>
+            </div>
+            <div class="tyn-media-row">
+              <p class="content">@${ infoUserB.username }</p>
+            </div>
+          </div>
+          <div class="tyn-media-option tyn-aside-item-option">
+            <ul class="tyn-media-option-list">
+              <li>
+                <button class="btn btn-icon btn-white btn-pill" cancel-request data-username="${ infoUserB.username }">
+                  <!-- x-lg -->
+                  <svg class="bi bi-x-lg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z' />
+                  </svg>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      `;
+      if (firstLi)
+        requestListPane.insertBefore(li, firstLi);
+      else
+        requestListPane.appendChild(li);
+
+      const cancelRequestBtn = li.querySelector('[cancel-request]');
+      if (cancelRequestBtn) {
+        addEventCancelRequest(cancelRequestBtn);
+      }
+    }
+  };
+    
+});
+//! end SERVER_RETURN_INFO_REQUEST_SENT

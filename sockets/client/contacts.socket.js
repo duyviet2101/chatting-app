@@ -64,6 +64,23 @@ module.exports = async (req, res) => {
         infoUserA
       });
 
+      //? emit updated length contactRequestsSent to userA
+      const lengthContactRequestsSent = userA.contactRequestsSent.length;
+      socket.emit('SERVER_RETURN_LENGTH_REQUESTS_SENT', {
+        userId: userA._id,
+        lengthContactRequestsSent
+      });
+      //? emit info user B to user A
+      const infoUserB = {
+        _id: userB._id,
+        username: userB.username,
+        fullName: userB.fullName,
+        avatar: userB.avatar
+      };
+      socket.emit('SERVER_RETURN_INFO_REQUEST_SENT', {
+        userId: userA._id,
+        infoUserB
+      });
     });
     //! end user send request contact
 
@@ -106,6 +123,13 @@ module.exports = async (req, res) => {
       socket.broadcast.emit('SERVER_RETURN_INFO_CANCEL_REQUEST', {
         userId: userB._id,
         username: userA.username
+      });
+
+      //? emit updated length contactRequestsSent to userA
+      const lengthContactRequestsSent = userA.contactRequestsSent.length;
+      socket.emit('SERVER_RETURN_LENGTH_REQUESTS_SENT', {
+        userId: userA._id,
+        lengthContactRequestsSent
       });
     });
     //! end user cancel request contact
