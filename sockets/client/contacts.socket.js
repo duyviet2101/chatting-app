@@ -322,5 +322,61 @@ module.exports = async (req, res) => {
       });
     });
     //! end user remove contact
+
+    //! user reject request contact
+    socket.on('CLIENT_REJECT_REQUEST_CONTACT', async (username) => {
+      const user = await User.findOne({ // user reject request
+        _id: req.user._id,
+        deleted: false,
+        statusAccount: 'active'
+      });
+
+      const userB = await User.findOne({ // user send request
+        username: username,
+        deleted: false,
+        statusAccount: 'active',
+      });
+
+      if (!user || !userB) {
+        return;
+      }
+
+      if (!user.contactRequestsReceived.includes(userB._id) || !userB.contactRequestsSent.includes(user._id)) {
+        return;
+      }
+
+      user.contactRequestsReceived = user.contactRequestsReceived.filter(contact => contact.toString() !== userB._id.toString());
+      userB.contactRequestsSent = userB.contactRequestsSent.filter(contact => contact.toString() !== user._id.toString());
+
+      await user.save();
+      await userB.save();
+
+      //? emit updated length contactRequestsSent to userB
+      const lengthContactRequestsSent = userB.contactRequestsSent.length;
+      socket.broadcast.emit('SERVER_RETURN_LENGTH_REQUESTS_SENT', {
+        userId: userB._id,
+        lengthContactRequestsSent
+      });
+
+      //? emit info user A to user B
+      socket.broadcast.emit('SERVER_RETURN_INFO_CANCEL_REQUEST', {
+        userId: userB._id,
+        username: user.username
+      });
+
+      //? emit updated length contactRequestsReceived to userA
+      const lengthContactRequestsReceived = user.contactRequestsReceived.length;
+      socket.emit('SERVER_RETURN_LENGTH_REQUESTS_RECEIVED_CANCEL', {
+        userId: user._id,
+        lengthContactRequestsReceived
+      });
+
+      //? emit info user B to user A
+      socket.emit('SERVER_RETURN_INFO_CANCEL_REQUEST', {
+        userId: user._id,
+        username: userB.username
+      });
+    });
+    //! end user reject request contact
   });
 }

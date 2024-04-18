@@ -104,6 +104,11 @@ socket.on('SERVER_RETURN_INFO_REQUEST_RECEIVED', data => {
       if (acceptRequestBtn) {
         addEventAcceptRequest(acceptRequestBtn);
       }
+
+      const rejectRequestBtn = li.querySelector('[reject-request]');
+      if (rejectRequestBtn) {
+        addEventRejectRequest(rejectRequestBtn);
+      }
     }
 
     const requestListPane = document.querySelector('#contact-request-received.tab-pane ul');
@@ -156,6 +161,11 @@ socket.on('SERVER_RETURN_INFO_REQUEST_RECEIVED', data => {
       if (acceptRequestBtn) {
         addEventAcceptRequest(acceptRequestBtn);
       }
+
+      const rejectRequestBtn = li.querySelector('[reject-request]');
+      if (rejectRequestBtn) {
+        addEventRejectRequest(rejectRequestBtn);
+      }
     }
   };
 });
@@ -167,7 +177,6 @@ const addEventCancelRequest = (btn) => {
 
   btn.addEventListener('click', () => {
     socket.emit('CLIENT_CANCEL_REQUEST_CONTACT', username);
-    btn.closest('.tyn-aside-item').remove();
   });
 };
 const cancelRequestBtn = document.querySelectorAll('[cancel-request]');
@@ -219,6 +228,13 @@ socket.on('SERVER_RETURN_INFO_CANCEL_REQUEST', data => {
     const requestListPane = document.querySelector('#contact-request-received.tab-pane ul');
     if (requestListPane) {
       const li = requestListPane.querySelector(`li[data-username="${username}"]`);
+      if (li)
+        li.remove();
+    }
+
+    const requestSentList = document.querySelector('#contact-request-sent.tab-pane ul');
+    if (requestSentList) {
+      const li = requestSentList.querySelector(`li[data-username="${username}"]`);
       if (li)
         li.remove();
     }
@@ -463,3 +479,19 @@ socket.on('SERVER_RETURN_REMOVE_CONTACT', data => {
   }
 });
 //! end SERVER_RETURN_REMOVE_CONTACT
+
+//! reject request
+const addEventRejectRequest = (btn) => {
+  const username = btn.getAttribute('data-username');
+
+  btn.addEventListener('click', () => {
+    socket.emit('CLIENT_REJECT_REQUEST_CONTACT', username);
+  });
+};
+const rejectRequestBtn = document.querySelectorAll('[reject-request]');
+if (rejectRequestBtn && rejectRequestBtn.length > 0) {
+  rejectRequestBtn.forEach(btn => {
+    addEventRejectRequest(btn);
+  });
+}
+//! end reject request
