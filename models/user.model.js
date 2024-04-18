@@ -45,10 +45,9 @@ const UserSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
       },
-      room_chat_id: String,
-      favorite: {
-        type: Boolean,
-        default: false
+      room_chat_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'roomChat'
       },
       addedAt: Date
     }

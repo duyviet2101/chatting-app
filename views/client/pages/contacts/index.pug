@@ -41,9 +41,9 @@ block main
         // .tyn-aside-search
         .tab-content
           #contact-all.tab-pane.url-triggered.show.active(tabindex='0' role='tabpanel')
-            ul.tyn-aside-list
+            ul.tyn-aside-list.contact-list
               each contact, index in contactList
-                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.user.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
+                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.user.username == username ? "active" : "") : (index === 0 ? 'active' : '')}` data-username=contact.user.username)
                   .tyn-media-group
                     .tyn-media.tyn-size-lg
                       img(src=contact.user.avatar alt='')
@@ -88,31 +88,33 @@ block main
                     // .tyn-media-option
                 // .tyn-aside-item
               else
-                p.text-center.mt-3.mb-0 No contacts found
-                p.text-center.mt-0.mb-0 Add new contacts to start chatting
-                hr.mt-3.mb-3
-                h5.text-center.mt-0.mb-0 Recommeded contacts
-                each contact, index in recommendedAddContact
-                  li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
-                    .tyn-media-group
-                      .tyn-media.tyn-size-lg
-                        img(src=contact.avatar alt='')
-                      .tyn-media-col(onclick=`window.location.href='/contacts/profile/${contact.username}'`)
-                        .tyn-media-row
-                          h6.name #{contact.fullName}
-                        .tyn-media-row
-                          p.content @#{contact.username}
-                      .tyn-media-option.tyn-aside-item-option
-                        button.btn.btn-icon.btn-light.btn-md.btn-pill(send-request data-username=`${contact.username}`)
-                          // person-plus-fill
-                          svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                            path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
-                            path(fill-rule='evenodd' d='M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5')
-                  
-                    // .tyn-media-col
-                  // .tyn-aside-item
-                else 
-                  p.text-center.mt-3.mb-0 No recommended contacts found
+                div.no-contacts
+                  p.text-center.mt-3.mb-0 No contacts found
+                  p.text-center.mt-0.mb-0 Add new contacts to start chatting
+            ul.tyn-aside-list
+              hr.mt-3.mb-3
+              h5.text-center.mt-0.mb-0 Recommeded contacts
+              each contact, index in recommendedAddContact
+                li.tyn-aside-item.js-toggle-main(class=`${username ? (contact.username == username ? "active" : "") : (index === 0 ? 'active' : '')}`)
+                  .tyn-media-group
+                    .tyn-media.tyn-size-lg
+                      img(src=contact.avatar alt='')
+                    .tyn-media-col(onclick=`window.location.href='/contacts/profile/${contact.username}'`)
+                      .tyn-media-row
+                        h6.name #{contact.fullName}
+                      .tyn-media-row
+                        p.content @#{contact.username}
+                    .tyn-media-option.tyn-aside-item-option
+                      button.btn.btn-icon.btn-light.btn-md.btn-pill(send-request data-username=`${contact.username}`)
+                        // person-plus-fill
+                        svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                          path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
+                          path(fill-rule='evenodd' d='M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5')
+                
+                  // .tyn-media-col
+                // .tyn-aside-item
+              else 
+                p.text-center.mt-3.mb-0 No recommended contacts found
             // .tyn-aside-list
           // .tab-pane
           #contact-request-sent.tab-pane.url-triggered(tabindex='0' role='tabpanel')

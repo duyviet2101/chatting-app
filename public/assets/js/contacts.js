@@ -36,7 +36,10 @@ socket.on('SERVER_RETURN_LENGTH_REQUESTS_RECEIVED', data => {
 
     const countRequestPane = document.querySelector('.count-request-pane');
     if (countRequestPane) {
-      countRequestPane.innerHTML = `(${lengthContactRequestsReceived})`;
+      if (lengthContactRequestsReceived == 0)
+        countRequestPane.innerHTML = '';
+      else
+        countRequestPane.innerHTML = `(${lengthContactRequestsReceived})`;
     }
   }
 });
@@ -96,6 +99,11 @@ socket.on('SERVER_RETURN_INFO_REQUEST_RECEIVED', data => {
         requestListNoti.insertBefore(li, firstLi);
       else
         requestListNoti.appendChild(li);
+
+      const acceptRequestBtn = li.querySelector('[accept-request]');
+      if (acceptRequestBtn) {
+        addEventAcceptRequest(acceptRequestBtn);
+      }
     }
 
     const requestListPane = document.querySelector('#contact-request-received.tab-pane ul');
@@ -143,6 +151,11 @@ socket.on('SERVER_RETURN_INFO_REQUEST_RECEIVED', data => {
         requestListPane.insertBefore(li, firstLi);
       else
         requestListPane.appendChild(li);
+
+      const acceptRequestBtn = li.querySelector('[accept-request]');
+      if (acceptRequestBtn) {
+        addEventAcceptRequest(acceptRequestBtn);
+      }
     }
   };
 });
@@ -283,3 +296,79 @@ socket.on('SERVER_RETURN_INFO_REQUEST_SENT', data => {
     
 });
 //! end SERVER_RETURN_INFO_REQUEST_SENT
+
+//! accept request
+const addEventAcceptRequest = (btn) => {
+  const username = btn.getAttribute('data-username');
+
+  btn.addEventListener('click', () => {
+    socket.emit('CLIENT_ACCEPT_REQUEST_CONTACT', username);
+    // btn.closest('.tyn-aside-item').remove();
+  });
+};
+const acceptRequestBtn = document.querySelectorAll('[accept-request]');
+if (acceptRequestBtn && acceptRequestBtn.length > 0) {
+  acceptRequestBtn.forEach(btn => {
+    addEventAcceptRequest(btn);
+  });
+}
+//! end accept request
+
+//! SERVER_RETURN_INFO_ACCEPT_REQUEST
+socket.on('SERVER_RETURN_INFO_ACCEPT_REQUEST', data => {
+  const {
+    userId,
+    infoUser
+  } = data;
+
+  if (userId == window.user._id) {
+    const requestSentList = document.querySelector('#contact-request-sent.tab-pane ul');
+    if (requestSentList) {
+      const li = requestSentList.querySelector(`li[data-username="${infoUser.username}"]`);
+      if (li)
+        li.remove();
+    }
+
+    const contactList = document.querySelector('#contact-all.tab-pane ul.contact-list');
+    if (contactList) {
+      const firstLi = contactList.querySelector('li');
+      contactList.querySelector('.no-contacts')?.remove();
+
+      const li = document.createElement('li');
+      li.classList.add('tyn-aside-item', 'js-toggle-main');
+      li.setAttribute('data-username', infoUser.username);
+      li.innerHTML = `
+        <div class="tyn-media-group">
+          <div class="tyn-media tyn-size-lg">
+            <img src="${ infoUser.avatar }" alt="">
+          </div>
+          <div class="tyn-media-col" onclick="window.location.href='/contacts/profile/${ infoUser.username }#contact-all'">
+            <div class="tyn-media-row">
+              <h6 class="name">${ infoUser.fullName }</h6>
+            </div>
+            <div class="tyn-media-row">
+              <p class="content">@${ infoUser.username }</p>
+            </div>
+          </div>
+          <div class="tyn-media-option tyn-aside-item-option">
+            <ul class="tyn-media-option-list">
+              <li>
+                <button class="btn btn-icon btn-white btn-pill" remove-contact data-username="${ infoUser.username }">
+                  <!-- x-lg -->
+                  <svg class="bi bi-x-lg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z' />
+                  </svg>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      `;
+      if (firstLi)
+        contactList.insertBefore(li, firstLi);
+      else
+        contactList.appendChild(li);
+    }
+  }
+});
+//! end SERVER_RETURN_INFO_ACCEPT_REQUEST

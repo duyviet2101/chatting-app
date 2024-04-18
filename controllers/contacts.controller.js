@@ -24,7 +24,7 @@ module.exports.index = async (req, res, next) => {
     })
     .lean();
 
-  let contactList = user.contactList.sort((a, b) => {
+  let contactList = user.contactList?.sort((a, b) => {
     return a.user.username.localeCompare(b.user.username);
   }) || [];
   let contactBlocked = user.contactBlocked || [];
@@ -57,7 +57,7 @@ module.exports.index = async (req, res, next) => {
       })
       .lean();
 
-  const mutualContact = user.contactList.filter(contact => {
+  const mutualContact = user.contactList?.filter(contact => {
     return firstContact.contactList.some(c => c.user._id.toString() === contact.user._id.toString());
   });
 
@@ -106,7 +106,7 @@ module.exports.profile = async (req, res, next) => {
     })
     .lean();
 
-  let contactList = user.contactList.sort((a, b) => {
+  let contactList = user.contactList?.sort((a, b) => {
     return a.user.username.localeCompare(b.user.username);
   }) || [];
   let contactBlocked = user.contactBlocked || [];
@@ -144,7 +144,7 @@ module.exports.profile = async (req, res, next) => {
     return res.redirect('/contacts');
   }
 
-  const mutualContact = user.contactList.filter(contact => {
+  const mutualContact = user.contactList?.filter(contact => {
     return displayContact.contactList.some(c => c.user._id.toString() === contact.user._id.toString());
   });
 
