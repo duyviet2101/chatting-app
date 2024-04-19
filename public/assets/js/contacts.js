@@ -319,7 +319,6 @@ socket.on('SERVER_RETURN_INFO_REQUEST_SENT', data => {
 //! accept request
 const addEventAcceptRequest = (btn) => {
   const username = btn.getAttribute('data-username');
-  console.log(username);
   btn.addEventListener('click', () => {
     socket.emit('CLIENT_ACCEPT_REQUEST_CONTACT', username);
     // btn.closest('.tyn-aside-item').remove();

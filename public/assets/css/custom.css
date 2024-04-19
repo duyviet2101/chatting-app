@@ -1,3 +1,10 @@
+textarea {
+  resize: none;
+  overflow: hidden;
+  scrollbar-width: none; /* hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* hide scrollbar for IE and Edge */
+}
+
 /* Show Alert */
 [show-alert] {
   position: fixed;
@@ -87,5 +94,53 @@
   font-weight: 600;
 }
 /* end notification */
+
+/* box-typing */
+.box-typing {
+  position: relative;
+}
+
+.box-typing .inner-dots {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.box-typing .inner-dots span {
+  animation: blink 1.5s infinite;
+  height: 5px;
+  width: 5px;
+  background: var(--reply-text);
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 3px;
+}
+
+.box-typing .inner-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.box-typing .inner-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+  0% {
+      opacity: 0.1;
+  }
+
+  20% {
+      opacity: 1;
+  }
+
+  100% {
+      opacity: 0.1;
+  }
+}
+
+/* End box-typing */
+
 
 /*! end custom */

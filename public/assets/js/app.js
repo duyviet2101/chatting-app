@@ -114,28 +114,8 @@
 
           chatSend && chatSend.addEventListener("click", function(event){
             event.preventDefault();
-            let getInput = chatInput.innerText;
-            let chatBubble = `
-            <div class="tyn-reply-bubble">
-                <div class="tyn-reply-text">
-                    ${getInput}
-                </div>
-                ${chatActions}
-            </div>
-            `;
-            let outgoingWraper = `
-            <div class="tyn-reply-item outgoing">
-              <div class="tyn-reply-group"></div>
-            </div>
-            `
-            if(!chatReply.querySelector('.tyn-reply-item').classList.contains('outgoing')){
-              getInput !== "" && chatReply.insertAdjacentHTML("afterbegin", outgoingWraper);
-              getInput !== "" && chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
-            }else{
-              getInput !== "" && chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
-            }
             
-            chatInput.innerHTML = "";
+            chatInput.value = "";
             let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
             let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
             simpleBody.getScrollElement().scrollTop = height;
@@ -147,7 +127,23 @@
               chatSend.click();
             }
           });
-        }
+        },
+        receive: function(){
+          socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
+            let chatBody = document.querySelector('#tynChatBody');
+            let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
+            let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
+            simpleBody.getScrollElement().scrollTop = height;
+          });
+        },
+        typing: function(){
+          socket.on('SERVER_RETURN_TYPING', async (data) => {
+            let chatBody = document.querySelector('#tynChatBody');
+            let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
+            let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
+            simpleBody.getScrollElement().scrollTop = height;
+          });
+        },
       },
       item : function(){
         let elm = document.querySelectorAll('.js-toggle-main'); 
@@ -390,6 +386,8 @@
       TynApp.Chat.reply.input();
       TynApp.Chat.reply.quick();
       TynApp.Chat.reply.send();
+      TynApp.Chat.reply.receive();
+      TynApp.Chat.reply.typing();
       TynApp.Chat.item();
       TynApp.Chat.mute();
       TynApp.Chat.aside();
@@ -581,5 +579,4 @@ if (updateImageTrigger && updateImageTrigger.length > 0) {
   })
 }
 //! end .update-image-trigger
-
 //end-js
