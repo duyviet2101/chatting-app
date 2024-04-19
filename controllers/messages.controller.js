@@ -6,12 +6,69 @@ const socket = require('../sockets/client/index.socket');
 
 // [GET] /messages
 module.exports.index = async (req, res, next) => {
+  const userId = req.user._id;
 
   socket(req, res);
 
+  //! get aside list contact and messages
+  let contactsAsideList = await RoomChat.find({
+    users: {
+      $elemMatch: {
+        user: userId
+      }
+    }
+  }).populate({
+    path: 'users.user',
+    select: 'fullName avatar username'
+  }).lean();
+
+  for (let i = 0; i < contactsAsideList.length; i++) {
+    const lastMessage = await Chat.findOne
+    ({
+      room_chat_id: contactsAsideList[i]._id
+    }).sort({
+      createdAt: 'desc'
+    }).select('-_id content images createdAt user').lean();
+
+    contactsAsideList[i].lastMessage = lastMessage || null;
+  };
+
+  contactsAsideList = contactsAsideList.filter(contact => contact.lastMessage);
+
+  contactsAsideList.sort((a, b) => {
+    return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt)
+  });
+
+  contactsAsideList.forEach(contact => {
+    contact.users = contact.users.filter(user => user.user._id.toString() != userId);
+  });
+
+  // return res.json(contactsAsideList);
+  //! end get aside list contact and messages
+
+  //! get contact list
+  const user = await User.findOne({
+    _id: userId
+  })
+  .select('contactList')
+  .populate({
+    path: 'contactList.user',
+    select: 'fullName username avatar'
+  })
+  .lean();
+
+  user.contactList.sort((a, b) => {
+    return a.user.fullName.localeCompare(b.user.fullName)
+  });
+  // return res.json(user.contactList)
+  //! end get contact list
+
+
   res.render('client/pages/messages/index', {
     pageTitle: 'Messages',
-    activeTab: 'messages'
+    activeTab: 'messages',
+    contactsAsideList,
+    contactList: user.contactList
   })
 }
 
@@ -121,9 +178,6 @@ module.exports.show = async (req, res, next) => {
     const previousChat = chats[i - 1];
 
     if (!previousChat || previousChat.createdAt - chat.createdAt > 60000 || chat.user._id.toString() !== previousChat.user._id.toString()) {
-      if (previousChat && previousChat.createdAt - chat.createdAt > 60000) {
-        console.log(previousChat.createdAt - chat.createdAt);
-      }
       currentGroup = {
         user: chat.user,
         messages: [chat]

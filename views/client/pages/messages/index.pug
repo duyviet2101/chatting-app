@@ -35,14 +35,14 @@ block main
                 if (contact.typeRoom == "single")
                   - var userContact = contact.users[0].user
                   - var lastMessage = contact.lastMessage
-                  li.tyn-aside-item.js-toggle-main(class=`${contact._id.toString() == roomChatId ? 'active' : ''}` contact-aside-list data-room-id=`${contact._id.toString()}`)
+                  li.tyn-aside-item.js-toggle-main(class=`${contact._id.toString() == roomChatId ? 'active' : ''}` contact-aside data-room-id=`${contact._id.toString()}`)
                     .tyn-media-group
                       a.tyn-media.tyn-size-lg(href=`/messages/${contact._id.toString()}`)
                         img(src=userContact.avatar alt='')
                       a.tyn-media-col(href=`/messages/${contact._id.toString()}`)
                         .tyn-media-row
                           h6.name #{userContact.fullName}
-                          //- span.typing typing ...
+                          span.typing.d-none typing ...
                         .tyn-media-row.has-dot-sap
                           p.content 
                             if (lastMessage)
@@ -50,7 +50,7 @@ block main
                                 | You: #{lastMessage.content}
                               else
                                 | #{lastMessage.content}
-                          span.meta #{moment(lastMessage.createdAt).fromNow()}
+                          span.meta(lastMessage) #{moment(lastMessage.createdAt).fromNow()}
                       .tyn-media-option.tyn-aside-item-option
                         ul.tyn-media-option-list
                           li.dropdown
@@ -1077,4 +1077,6 @@ block main
     // .modal-dialog
   // .modal
 block script
+  script(roomChatId=roomChatId).
+    window.roomChatId = document.currentScript.getAttribute('roomChatId');
   script(src="/assets/js/messages.js") 

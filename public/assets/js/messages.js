@@ -15,7 +15,8 @@ if (chatSend) {
       })
       socket.emit('CLIENT_SEND_TYPING', {
         isTyping: false,
-        userId: window.user._id
+        userId: window.user._id,
+        roomChatId: window.roomChatId
       });
     }
   });
@@ -126,13 +127,15 @@ let timeOut;
 const showTyping = () => {
   socket.emit('CLIENT_SEND_TYPING', {
     isTyping: true,
-    userId: window.user._id
+    userId: window.user._id,
+    roomChatId: window.roomChatId
   });
   clearTimeout(timeOut);
   timeOut = setTimeout(() => {
     socket.emit('CLIENT_SEND_TYPING', {
       isTyping: false,
-      userId: window.user._id
+      userId: window.user._id,
+      roomChatId: window.roomChatId
     });
   }, 3000);
 }
@@ -191,3 +194,20 @@ socket.on('SERVER_RETURN_TYPING', async (data) => {
   }
 });
 //! end SERVER_RETURN_TYPING
+
+//! SERVER_RETURN_TYPING_ASIDE
+socket.on('SERVER_RETURN_TYPING_ASIDE', async (data) => {
+  const userId = data.userId;
+  const isTyping = data.isTyping;
+  const roomChatId = data.roomChatId;
+
+  const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
+  if (contactAside) {
+    if (isTyping) {
+      contactAside.querySelector('.typing').classList.remove('d-none');
+    } else {
+      contactAside.querySelector('.typing').classList.add('d-none');
+    }
+  }
+});
+//! end SERVER_RETURN_TYPING_ASIDE

@@ -62,6 +62,9 @@ module.exports = async (req, res, socket) => {
       avatar: avatar,
       isTyping: isTyping
     });
+
+    //? emit typing to client for aside list
+    
   });
   //! end CLIENT_SEND_TYPING
 };
