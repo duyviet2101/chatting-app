@@ -8,6 +8,7 @@ const flash = require('express-flash');
 const methodOverride = require('method-override');
 const { Server } = require('socket.io');
 const { createServer } = require('node:http');
+const moment = require('moment');
 
 const app = express();
 const port = process.env.PORT || 3066;
@@ -56,6 +57,10 @@ app.use(flash());
 //     next();
 // });
 //! end flash
+
+//! locals
+app.locals.moment = moment
+//! end locals
 
 //! routes
 app.use(require('./routes/client/index.route.js'))

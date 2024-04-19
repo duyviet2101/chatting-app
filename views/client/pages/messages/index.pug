@@ -1936,24 +1936,108 @@ block main
         // .tyn-chat-head
         #tynChatBody.tyn-chat-body.js-scroll-to-end
           #tynReply.tyn-reply
-            //- .tyn-reply-item.incoming.typing
-              .tyn-reply-avatar
-                .tyn-media.tyn-size-md.tyn-circle
-                  img(src='/images/avatar/2.jpg' alt='')
-              .tyn-reply-group
-                .tyn-reply-fullName
-                  span.name.fs-6.fw-light Jasmine Thompson 
-                  //- span.fs-6.fw-light 03:29 PM
-                .tyn-reply-bubble
-                  .tyn-reply-text
-                    .box-typing
-                      .inner-dots
-                        span
-                        span
-                        span
-                // .tyn-reply-bubble
-              // .tyn-reply-group
-            // .tyn-reply-item            
+            - var previousCreatedAt = null
+            each chat, index in chats
+              if (previousCreatedAt && (moment(previousCreatedAt).diff(moment(chat.messages[0].createdAt), 'minutes') > 10))
+                .tyn-reply-separator #{moment(chat.messages[0].createdAt).format('MMMM Do YYYY h:mm A')}
+              - previousCreatedAt = chat.messages[0].createdAt
+              if (chat.user._id.toString() == user._id)
+                .tyn-reply-item.outgoing
+                  .tyn-reply-group
+                    each message in chat.messages
+                      .tyn-reply-bubble
+                        .tyn-reply-text.w-100
+                          p.m-0 #{message.content}
+                        // tyn-reply-text
+                        ul.tyn-reply-tools
+                          li
+                            button.btn.btn-icon.btn-sm.btn-transparent.btn-pill
+                              // emoji-smile-fill
+                              svg.bi.bi-emoji-smile-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M10 8c-.552 0-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5S10.552 8 10 8')
+                          // li
+                          li.dropup-center
+                            button.btn.btn-icon.btn-sm.btn-transparent.btn-pill(data-bs-toggle='dropdown')
+                              // three-dots
+                              svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
+                            .dropdown-menu.dropdown-menu-xxs
+                              ul.tyn-list-links
+                                //- li
+                                  a(href='#')
+                                    // pencil-square
+                                    svg.bi.bi-pencil-square(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                      path(d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z')
+                                      path(fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z')
+                                    span Edit
+                                li
+                                  a(href='#' delete-message data-id=message._id)
+                                    // trash
+                                    svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                      path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
+                                      path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
+                                    span Delete
+                              // .tyn-list-links
+                            // .dropdown-menu
+                          // li
+                        // .tyn-reply-tools
+                    // .tyn-reply-bubble
+                  // .tyn-reply-group
+                // .tyn-reply-item
+              else
+                .tyn-reply-item.incoming
+                  .tyn-reply-avatar
+                    .tyn-media.tyn-size-md.tyn-circle
+                      img(src=chat.user.avatar alt='')
+                  .tyn-reply-group
+                    .tyn-reply-fullName
+                      span.name.fs-6.fw-light
+                        | #{chat.user.fullName}
+                    each message in chat.messages
+                      .tyn-reply-bubble
+                        .tyn-reply-text.w-100
+                          p.m-0 #{message.content}
+                        // tyn-reply-text
+                        ul.tyn-reply-tools
+                          li
+                            button.btn.btn-icon.btn-sm.btn-transparent.btn-pill
+                              // emoji-smile-fill
+                              svg.bi.bi-emoji-smile-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M10 8c-.552 0-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5S10.552 8 10 8')
+                          // li
+                          li.dropup-center
+                            button.btn.btn-icon.btn-sm.btn-transparent.btn-pill(data-bs-toggle='dropdown')
+                              // three-dots
+                              svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
+                            .dropdown-menu.dropdown-menu-xxs
+                              ul.tyn-list-links
+                                //- li
+                                  a(href='#')
+                                    // pencil-square
+                                    svg.bi.bi-pencil-square(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                      path(d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z')
+                                      path(fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z')
+                                    span Edit
+                                li
+                                  a(href='#' delete-message data-id=message._id)
+                                    // trash
+                                    svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                      path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
+                                      path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
+                                    span Delete
+                              // .tyn-list-links
+                            // .dropdown-menu
+                          // li
+                        // .tyn-reply-tools
+                    // .tyn-reply-bubble
+                  // .tyn-reply-group
+                // .tyn-reply-item
+
+                // .tyn-reply-item     
+              if (index == chats.length - 1)
+                .tyn-reply-separator #{moment(chat.messages[0].createdAt).format('MMMM Do YYYY h:mm A')}              
+
             //- .tyn-reply-item.incoming
             //-   .tyn-reply-avatar
             //-     .tyn-media.tyn-size-md.tyn-circle
@@ -2106,45 +2190,45 @@ block main
             //- // .tyn-reply-item
             //- .tyn-reply-separator Aug 22, 2022, 3:05 PM
             //- .tyn-reply-item.outgoing
-            //-   .tyn-reply-group
-            //-     .tyn-reply-bubble
-            //-       .tyn-reply-text  Do you know which App or feature it will require to set up. 
-            //-       // tyn-reply-text
-            //-       ul.tyn-reply-tools
-            //-         li
-            //-           button.btn.btn-icon.btn-sm.btn-transparent.btn-pill
-            //-             // emoji-smile-fill
-            //-             svg.bi.bi-emoji-smile-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-            //-               path(d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M10 8c-.552 0-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5S10.552 8 10 8')
-            //-         // li
-            //-         li.dropup-center
-            //-           button.btn.btn-icon.btn-sm.btn-transparent.btn-pill(data-bs-toggle='dropdown')
-            //-             // three-dots
-            //-             svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-            //-               path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
-            //-           .dropdown-menu.dropdown-menu-xxs
-            //-             ul.tyn-list-links
-            //-               li
-            //-                 a(href='#')
-            //-                   // pencil-square
-            //-                   svg.bi.bi-pencil-square(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-            //-                     path(d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z')
-            //-                     path(fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z')
-            //-                   span Edit
-            //-               li
-            //-                 a(href='#')
-            //-                   // trash
-            //-                   svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-            //-                     path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
-            //-                     path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
-            //-                   span Delete
-            //-             // .tyn-list-links
-            //-           // .dropdown-menu
-            //-         // li
-            //-       // .tyn-reply-tools
-            //-     // .tyn-reply-bubble
-            //-   // .tyn-reply-group
-            //- // .tyn-reply-item
+              .tyn-reply-group
+                .tyn-reply-bubble
+                  .tyn-reply-text  Do you know which App or feature it will require to set up. 
+                  // tyn-reply-text
+                  ul.tyn-reply-tools
+                    li
+                      button.btn.btn-icon.btn-sm.btn-transparent.btn-pill
+                        // emoji-smile-fill
+                        svg.bi.bi-emoji-smile-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                          path(d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M10 8c-.552 0-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5S10.552 8 10 8')
+                    // li
+                    li.dropup-center
+                      button.btn.btn-icon.btn-sm.btn-transparent.btn-pill(data-bs-toggle='dropdown')
+                        // three-dots
+                        svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                          path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
+                      .dropdown-menu.dropdown-menu-xxs
+                        ul.tyn-list-links
+                          li
+                            a(href='#')
+                              // pencil-square
+                              svg.bi.bi-pencil-square(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z')
+                                path(fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z')
+                              span Edit
+                          li
+                            a(href='#')
+                              // trash
+                              svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
+                                path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
+                              span Delete
+                        // .tyn-list-links
+                      // .dropdown-menu
+                    // li
+                  // .tyn-reply-tools
+                // .tyn-reply-bubble
+              // .tyn-reply-group
+            // .tyn-reply-item
             //- .tyn-reply-item.incoming
             //-   .tyn-reply-avatar
             //-     .tyn-media.tyn-size-md.tyn-circle

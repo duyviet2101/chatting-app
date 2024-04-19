@@ -6,3 +6,6 @@ mixin formatDate(time)
 
 mixin formatTime(time)
   span #{moment(time).format("HH:mm:ss")}
+
+mixin diffTime(time1, time2)
+  span #{moment(time1).diff(moment(time2), 'minutes')}

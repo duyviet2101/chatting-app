@@ -10,9 +10,13 @@ if (chatSend) {
     const content = chatInput.value
     if (content.trim() !== ''){
       socket.emit('CLIENT_SEND_MESSAGE', {
-        content: content
+        content: content,
+        userId: window.user._id
       })
-      socket.emit('CLIENT_SEND_TYPING', false);
+      socket.emit('CLIENT_SEND_TYPING', {
+        isTyping: false,
+        userId: window.user._id
+      });
     }
   });
 }
@@ -120,10 +124,16 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
 //! typing
 let timeOut;
 const showTyping = () => {
-  socket.emit('CLIENT_SEND_TYPING', true);
+  socket.emit('CLIENT_SEND_TYPING', {
+    isTyping: true,
+    userId: window.user._id
+  });
   clearTimeout(timeOut);
   timeOut = setTimeout(() => {
-    socket.emit('CLIENT_SEND_TYPING', false);
+    socket.emit('CLIENT_SEND_TYPING', {
+      isTyping: false,
+      userId: window.user._id
+    });
   }, 3000);
 }
 //! end typing
