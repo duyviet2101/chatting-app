@@ -28,6 +28,11 @@ const roomChatSchema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'member'],
         default: 'member'
+      },
+      messageSeen: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Chat',
+        default: null
       }
     }
   ],

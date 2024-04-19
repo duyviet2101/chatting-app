@@ -1,5 +1,6 @@
-const RoomChat = require('../models/room-chat.model')
-const Chat = require('../models/chat.model')
+const RoomChat = require('../models/room-chat.model');
+const Chat = require('../models/chat.model');
+const User = require('../models/user.model');
 
 const socket = require('../sockets/client/index.socket');
 
@@ -27,8 +28,16 @@ module.exports.show = async (req, res, next) => {
       $elemMatch: {
         user: userId
       }
-    }
-  })
+    },
+    status: 'active'
+  }).populate({
+    path: 'users.user',
+    select: 'fullName username email phone avatar cover bio contactList groups gender statusOnline'
+  }).lean();
+
+  roomChat.users = roomChat.users.filter(user => user.user._id.toString() != userId);
+
+  // return res.json(roomChat)
 
   if (!roomChat) {
     req.flash('errors', 'Room chat not found');
@@ -41,7 +50,7 @@ module.exports.show = async (req, res, next) => {
   //! end messagesRoomChatSocket
 
   //! get aside list contact and messages
-  let contacts = await RoomChat.find({
+  let contactsAsideList = await RoomChat.find({
     users: {
       $elemMatch: {
         user: userId
@@ -52,29 +61,46 @@ module.exports.show = async (req, res, next) => {
     select: 'fullName avatar username'
   }).lean();
 
-  for (let i = 0; i < contacts.length; i++) {
+  for (let i = 0; i < contactsAsideList.length; i++) {
     const lastMessage = await Chat.findOne
     ({
-      room_chat_id: contacts[i]._id
+      room_chat_id: contactsAsideList[i]._id
     }).sort({
       createdAt: 'desc'
     }).select('-_id content images createdAt user').lean();
 
-    contacts[i].lastMessage = lastMessage || null;
+    contactsAsideList[i].lastMessage = lastMessage || null;
   };
 
-  contacts = contacts.filter(contact => contact.lastMessage);
+  contactsAsideList = contactsAsideList.filter(contact => contact.lastMessage);
 
-  contacts.sort((a, b) => {
+  contactsAsideList.sort((a, b) => {
     return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt)
   });
 
-  contacts.forEach(contact => {
-    contact.users = contact.users.filter(user => user.user._id != userId);
+  contactsAsideList.forEach(contact => {
+    contact.users = contact.users.filter(user => user.user._id.toString() != userId);
   });
 
+  // return res.json(contactsAsideList);
   //! end get aside list contact and messages
 
+  //! get contact list
+  const user = await User.findOne({
+    _id: userId
+  })
+  .select('contactList')
+  .populate({
+    path: 'contactList.user',
+    select: 'fullName username avatar'
+  })
+  .lean();
+
+  user.contactList.sort((a, b) => {
+    return a.user.fullName.localeCompare(b.user.fullName)
+  });
+  // return res.json(user.contactList)
+  //! end get contact list
 
   //! get messages
   const chats = await Chat.find({
@@ -94,9 +120,10 @@ module.exports.show = async (req, res, next) => {
     const chat = chats[i];
     const previousChat = chats[i - 1];
 
-    if (!previousChat || chat.user._id.toString() !== previousChat.user._id.toString() || previousChat.createdAt - chat.createdAt > 60000) {
-      if (previousChat && previousChat.createdAt - chat.createdAt > 60000 && chat.user._id.toString() === previousChat.user._id.toString())
+    if (!previousChat || previousChat.createdAt - chat.createdAt > 60000 || chat.user._id.toString() !== previousChat.user._id.toString()) {
+      if (previousChat && previousChat.createdAt - chat.createdAt > 60000) {
         console.log(previousChat.createdAt - chat.createdAt);
+      }
       currentGroup = {
         user: chat.user,
         messages: [chat]
@@ -110,14 +137,18 @@ module.exports.show = async (req, res, next) => {
       return new Date(a.createdAt) - new Date(b.createdAt);
     });
   }
-
   // return res.json(groupedChats)
+  //! end get messages
+
 
   // Now you can use groupedChats instead of chats in your template rendering
   res.render('client/pages/messages/index', {
     pageTitle: 'Messages',
     activeTab: 'messages',
     roomChat: roomChat,
-    chats: groupedChats
+    chats: groupedChats,
+    contactsAsideList,
+    roomChatId,
+    contactList: user.contactList
   });
 }
