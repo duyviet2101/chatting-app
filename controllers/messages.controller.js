@@ -164,6 +164,12 @@ module.exports.show = async (req, res, next) => {
         } else {
           contact.unread = true;
         }
+      } else {
+        if (user.lastMessageSeen && user.lastMessageSeen._id.toString() == contact.lastMessage._id.toString()) {
+          contact.seen = true;
+        } else {
+          contact.seen = false;
+        }
       }
     })
     contact.users = contact.users.filter(user => user.user._id.toString() != userId);

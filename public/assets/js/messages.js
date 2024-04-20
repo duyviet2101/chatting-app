@@ -135,23 +135,25 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
       }
     }
 
-    //? update aside list contact
-    const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
-    if (contactAside) {
-      const lastMessage = contactAside.querySelector('[lastMessage]');
-      const lastTime = contactAside.querySelector('[lastTime]');
-      const seen = contactAside.querySelector('[seen]');
+  }
+  
+  //? update aside list contact
+  const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
+  if (contactAside) {
+    const lastMessage = contactAside.querySelector('[lastMessage]');
+    const lastTime = contactAside.querySelector('[lastTime]');
+    const seen = contactAside.querySelector('[seen]');
 
-      if (userId !== window.user._id) {
-        lastMessage.innerHTML = content;
-        contactAside.classList.add('unread');
+    if (userId !== window.user._id) {
+      lastMessage.innerHTML = content;
+      contactAside.classList.add('unread');
+      seen.classList.add('d-none');
     } else {
-        lastMessage.innerHTML = 'You: ' + content;
-        contactAside.classList.remove('unread');
-        seen.classList.add('d-none');
-      }
-      lastTime.innerHTML = moment(createdAt).fromNow();
+      lastMessage.innerHTML = 'You: ' + content;
+      contactAside.classList.remove('unread');
+      seen.classList.add('d-none');
     }
+    lastTime.innerHTML = moment(createdAt).fromNow();
   }
 });
 //! end SERVER_RETURN_SEND_MESSAGE
@@ -247,6 +249,8 @@ socket.on('SERVER_RETURN_TYPING', async (data) => {
 socket.on('SERVER_RETURN_LAST_MESSAGE_SEEN', async (data) => {
   const userId = data.userId;
   const roomChatId = data.roomChatId;
+  const fullName = data.fullName;
+
   if (userId == window.user._id) {
     const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
     if (contactAside)
@@ -263,12 +267,16 @@ socket.on('SERVER_RETURN_LAST_MESSAGE_SEEN', async (data) => {
     if (lastMessage && lastMessage.classList.contains('outgoing')) {
       lastMessage.querySelector('.tyn-reply-group').insertAdjacentHTML("beforeend", `
       <div class="seen col-12 text-end">
-        <span>seen</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+          <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0" />
+          <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+        </svg>
+        ${fullName}
       </div>
       `);
 
       const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
-      if (contactAside) {
+      if (contactAside && !contactAside.classList.contains('unread')) {
         contactAside.querySelector('[seen]').classList.remove('d-none');
       }
     }

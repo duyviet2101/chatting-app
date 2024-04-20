@@ -91,7 +91,8 @@ module.exports = async (req, res, socket) => {
 
     _io.to(roomChatId).emit('SERVER_RETURN_LAST_MESSAGE_SEEN', {
       userId,
-      roomChatId
+      roomChatId,
+      fullName
     });
   });
   //! end CLIENT_UPDATE_LAST_MESSAGE_SEEN
