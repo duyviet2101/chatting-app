@@ -19,7 +19,7 @@ module.exports.index = async (req, res, next) => {
     }
   }).populate({
     path: 'users.user',
-    select: 'fullName avatar username'
+    select: 'fullName avatar username statusOnline'
   }).populate({
     path: 'users.lastMessageSeen',
     select: 'user room_chat_id'
@@ -164,7 +164,7 @@ module.exports.show = async (req, res, next) => {
     }
   }).populate({
     path: 'users.user',
-    select: 'fullName avatar username'
+    select: 'fullName avatar username statusOnline'
   }).populate({
     path: 'users.lastMessageSeen',
     select: 'user room_chat_id'

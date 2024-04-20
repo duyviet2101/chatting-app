@@ -201,4 +201,12 @@ textarea {
 .emoji-container.shown {
   display: block;
 }
+
+.statusOnlineAside.online {
+  color: #00c8539c;
+}
+
+.statusOnlineAside.offline {
+  color: #ff000086;
+}
 /*! end custom */

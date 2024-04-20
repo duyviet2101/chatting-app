@@ -13,6 +13,34 @@ const upload = new FileUploadWithPreview.FileUploadWithPreview('upload-image', {
 });
 //! end file-upload-with-preview
 
+//! SERVER_RETURN_STATUS_ONLINE_USER
+socket.on('SERVER_RETURN_STATUS_ONLINE_USER', async (data) => {
+  const userId = data.userId;
+  const statusOnline = data.statusOnline;
+
+  const contactAside = document.querySelector(`[contact-aside][data-user-id="${userId}"]`);
+  if (contactAside) {
+    const statusOnlineElement = contactAside.querySelector('.statusOnlineAside');
+    if (statusOnline == 'online') {
+      statusOnlineElement.classList.remove('offline');
+      statusOnlineElement.classList.add('online');
+    } else {
+      statusOnlineElement.classList.remove('online');
+      statusOnlineElement.classList.add('offline');
+    }
+  }
+
+  const statusOnlineChatHead = document.querySelector('.statusOnlineChatHead');
+  if (statusOnlineChatHead) {
+    if (statusOnline == 'online') {
+      statusOnlineChatHead.innerHTML = 'Online';
+    } else {
+      statusOnlineChatHead.innerHTML = 'Offline';
+    }
+  }
+});
+//! end SERVER_RETURN_STATUS_ONLINE_USER
+
 //! CLIENT_SEND_MESSAGE
 let chatSend = document.querySelector('#tynChatSend');
 if (chatSend) {

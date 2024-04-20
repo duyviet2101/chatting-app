@@ -2,9 +2,6 @@ const User = require('../../models/user.model.js');
 const RoomChat = require('../../models/room-chat.model.js');
 
 module.exports = async (req, res, socket) => {
-  socket.on('disconnect', () => {
-    console.log('user disconnected:::', socket.id);
-  });
   
   //! user send request contact
   socket.on('CLIENT_SEND_REQUEST_CONTACT', async (username) => {
