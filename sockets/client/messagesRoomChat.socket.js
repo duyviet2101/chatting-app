@@ -2,6 +2,11 @@ const User = require('../../models/user.model');
 const Chat = require('../../models/chat.model');
 const RoomChat = require('../../models/room-chat.model');
 
+const {
+  uploadSingleCloudinaryByBuffer,
+  uploadMultipleCloudinaryByBuffer
+} = require('../../helpers/uploadCloudinary.js');
+
 module.exports = async (req, res, socket) => {
   const userId = res.locals.user._id;
   const fullName = res.locals.user.fullName;
@@ -19,11 +24,24 @@ module.exports = async (req, res, socket) => {
     if (sender != userId) {
       return;
     }
+
+    let images = [];
+    for (const imageBuffer of data.images) {
+      const image = await uploadSingleCloudinaryByBuffer({
+        file: {
+          buffer: imageBuffer,
+          originalname: sender + '_' + Date.now().toString()
+        },
+        folder: `/messages/${roomChatId}`
+      });
+      images.push(image);
+    };
     
     const message = new Chat({
       user: userId,
       room_chat_id: roomChatId,
-      content: content
+      content: content,
+      images: images
     });
 
     await message.save();
@@ -33,6 +51,7 @@ module.exports = async (req, res, socket) => {
       userId: userId,
       fullName: fullName,
       content: content,
+      images: images,
       avatar: avatar,
       createdAt: message.createdAt,
       roomChatId: roomChatId

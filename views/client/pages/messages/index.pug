@@ -50,7 +50,7 @@ block main
                                 | You: #{lastMessage.content}
                               else
                                 | #{lastMessage.content}
-                            span.meta(lastTime) #{moment(lastMessage.createdAt).fromNow()}
+                            span.meta(lastTime data-time=lastMessage.createdAt) #{moment(lastMessage.createdAt).fromNow()}
                             span.meta(seen class=`${contact.seen && !contact.unread && lastMessage.user.toString() == user._id.toString() ? '' : 'd-none'}`) Seen 
                           else 
                             p.content(lastMessage) No messages
@@ -139,18 +139,23 @@ block main
       // .tyn-aside-body
     // .tyn-aside
     if (!chats)
-      #tynMain.tyn-main.tyn-content-inner.main-shown
-        .container
-          .tyn-empty-state
-            .tyn-empty-state-inner
-              .tyn-empty-state-icon
-              h4.tyn-empty-state-title Select a chat to view
-    else
-      #tynMain.tyn-main.tyn-chat-content
+      #tynMain.tyn-main.main-shown.aside-collapsed
         .tyn-chat-head
           ul.tyn-list-inline.d-md-none.ms-n1
             li
-              button.btn.btn-icon.btn-md.btn-pill.btn-transparent.js-toggle-main(onclick='window.location.href = "/messages"')
+              button.btn.btn-icon.btn-md.btn-pill.btn-transparent.js-toggle-main
+                // arrow-left
+                svg.bi.bi-arrow-left(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                  path(fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8')
+          ul.tyn-list-inline.gap.gap-3
+            li.align-self-center.text-center
+              | Select a chat to view
+    else
+      #tynMain.tyn-main.tyn-chat-content.main-shown
+        .tyn-chat-head
+          ul.tyn-list-inline.d-md-none.ms-n1
+            li
+              button.btn.btn-icon.btn-md.btn-pill.btn-transparent.js-toggle-main
                 // arrow-left
                 svg.bi.bi-arrow-left(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                   path(fill-rule='evenodd' d='M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8')
@@ -185,34 +190,16 @@ block main
                 .tyn-reply-item.outgoing
                   .tyn-reply-group
                     each message in chat.messages
-                      .tyn-reply-bubble.flex-wrap
-                        .tyn-reply-text.text-break #{message.content}
-                        // tyn-reply-text
-                        ul.tyn-reply-tools
-                          li
-                            button.btn.btn-icon.btn-sm.btn-transparent.btn-pill
-                              // emoji-smile-fill
-                              svg.bi.bi-emoji-smile-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                path(d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M10 8c-.552 0-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5S10.552 8 10 8')
-                          // li
-                          li.dropup-center
-                            button.btn.btn-icon.btn-sm.btn-transparent.btn-pill(data-bs-toggle='dropdown')
-                              // three-dots
-                              svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
-                            .dropdown-menu.dropdown-menu-xxs
-                              ul.tyn-list-links
-                                li
-                                  a(href='#' delete-message data-id=message._id)
-                                    // trash
-                                    svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                      path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
-                                      path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
-                                    span Delete
-                              // .tyn-list-links
-                            // .dropdown-menu
-                          // li
-                        // .tyn-reply-tools
+                      if (message.images.length > 0)
+                        .tyn-reply-bubble.flex-wrap
+                          .tyn-reply-media
+                            each image in message.images
+                              a.glightbox.tyn-thumb(href=`${image}` data-gallery='media-photo')
+                                img.tyn-image(src=`${image}` alt='')
+                        // .tyn-reply-bubble
+                      if (message.content.length > 0)
+                        .tyn-reply-bubble.flex-wrap
+                          .tyn-reply-text.text-break #{message.content}
                         each seenUser in roomChat.users
                           if (seenUser.lastMessageSeen && seenUser.lastMessageSeen.toString() == message._id.toString())
                             .seen.col-12.text-end
@@ -220,7 +207,8 @@ block main
                                 path(d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0")
                                 path(d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z")
                               | #{seenUser.user.fullName}
-                    // .tyn-reply-bubble
+                        // .tyn-reply-bubble
+
                   // .tyn-reply-group
                 // .tyn-reply-item
               else
@@ -233,41 +221,18 @@ block main
                       span.name.fs-6.fw-light
                         | #{chat.user.fullName}
                     each message in chat.messages
-                      .tyn-reply-bubble
-                        .tyn-reply-text.text-break #{message.content}
+                      if (message.images.length > 0)
+                        .tyn-reply-bubble.flex-wrap
+                          .tyn-reply-media
+                            each image in message.images
+                              a.glightbox.tyn-thumb(href=`${image}` data-gallery='media-photo')
+                                img.tyn-image(src=`${image}` alt='')
+                        // .tyn-reply-bubble
+                      if (message.content.length > 0)
+                        .tyn-reply-bubble.flex-wrap
+                          .tyn-reply-text.text-break #{message.content}
+
                         // tyn-reply-text
-                        ul.tyn-reply-tools
-                          li
-                            button.btn.btn-icon.btn-sm.btn-transparent.btn-pill
-                              // emoji-smile-fill
-                              svg.bi.bi-emoji-smile-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                path(d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5M4.285 9.567a.5.5 0 0 1 .683.183A3.5 3.5 0 0 0 8 11.5a3.5 3.5 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683M10 8c-.552 0-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5S10.552 8 10 8')
-                          // li
-                          li.dropup-center
-                            button.btn.btn-icon.btn-sm.btn-transparent.btn-pill(data-bs-toggle='dropdown')
-                              // three-dots
-                              svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
-                            .dropdown-menu.dropdown-menu-xxs
-                              ul.tyn-list-links
-                                //- li
-                                  a(href='#')
-                                    // pencil-square
-                                    svg.bi.bi-pencil-square(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                      path(d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z')
-                                      path(fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z')
-                                    span Edit
-                                li
-                                  a(href='#' delete-message data-id=message._id)
-                                    // trash
-                                    svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                      path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
-                                      path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
-                                    span Delete
-                              // .tyn-list-links
-                            // .dropdown-menu
-                          // li
-                        // .tyn-reply-tools
                     // .tyn-reply-bubble
                   // .tyn-reply-group
                 // .tyn-reply-item
@@ -805,32 +770,13 @@ block main
             //- // .tyn-reply-item
           // .tyn-reply
         // .tyn-chat-body
-        .tyn-chat-form
+        .tyn-chat-form.flex-wrap
+          .preview-images-upload.col-12
+            .custom-file-container(data-upload-id='upload-image')
           .tyn-chat-form-insert
             ul.tyn-list-inline.gap.gap-3
-              li.dropup
-                button.btn.btn-icon.btn-light.btn-md.btn-pill(data-bs-toggle='dropdown' data-bs-offset='0,10')
-                  // plus-lg
-                  svg.bi.bi-plus-lg(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                    path(fill-rule='evenodd' d='M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2')
-                .dropdown-menu
-                  ul.tyn-list-links
-                    li
-                      a(href='#')
-                        // person-video2
-                        svg.bi.bi-person-video2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                          path(d='M10 9.05a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5')
-                          path(d='M2 1a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zM1 3a1 1 0 0 1 1-1h2v2H1zm4 10V2h9a1 1 0 0 1 1 1v9c0 .285-.12.543-.31.725C14.15 11.494 12.822 10 10 10c-3.037 0-4.345 1.73-4.798 3zm-4-2h3v2H2a1 1 0 0 1-1-1zm3-1H1V8h3zm0-3H1V5h3z')
-                        span New Group
-                    li
-                      a(href='#')
-                        // mic
-                        svg.bi.bi-mic(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                          path(d='M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5')
-                          path(d='M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3')
-                        span Voice Clip
               li.d-none.d-sm-block
-                button.btn.btn-icon.btn-light.btn-md.btn-pill
+                label.btn.btn-icon.btn-light.btn-md.btn-pill(for="file-upload-with-preview-upload-image")
                   // card-image
                   svg.bi.bi-card-image(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                     path(d='M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0')

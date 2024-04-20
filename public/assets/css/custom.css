@@ -150,4 +150,29 @@ textarea {
   background-color: var(--bg) !important;
 }
 
+.tyn-chat-form .preview-images-upload {
+  position: relative;
+}
+
+.tyn-chat-form .preview-images-upload .label-container {
+  display: none;
+}
+
+.tyn-chat-form .preview-images-upload .input-container {
+  display: none;
+}
+
+.tyn-chat-form .preview-images-upload .image-preview {
+  height: auto;
+  padding: 0;
+  border-radius: 0;
+  background-image: none !important;
+  background-color: var(--bs-gray-400);
+}
+
+.tyn-chat-form .preview-images-upload .image-preview-item {
+  width: 90px;
+  background-size: contain;
+}
+
 /*! end custom */

@@ -15,7 +15,7 @@ module.exports.uploadSingleCloudinaryByBuffer = async ({file, folder}) => {
     cloudinary.uploader.upload_stream({
       folder: '/chatting-app' + folder,
       public_id: file.originalname,
-      overwrite: true,
+      // overwrite: true,
     }, (error, result) => {
       if (error) {
         console.error(error);

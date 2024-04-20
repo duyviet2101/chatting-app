@@ -20,6 +20,9 @@ module.exports.index = async (req, res, next) => {
   }).populate({
     path: 'users.user',
     select: 'fullName avatar username'
+  }).populate({
+    path: 'users.lastMessageSeen',
+    select: 'user room_chat_id'
   }).lean();
 
   for (let i = 0; i < contactsAsideList.length; i++) {
@@ -28,18 +31,35 @@ module.exports.index = async (req, res, next) => {
       room_chat_id: contactsAsideList[i]._id
     }).sort({
       createdAt: 'desc'
-    }).select('-_id content images createdAt user').lean();
+    }).select('content images createdAt user').lean();
 
     contactsAsideList[i].lastMessage = lastMessage || null;
   };
 
-  contactsAsideList = contactsAsideList.filter(contact => contact.lastMessage);
+  contactsAsideList = contactsAsideList.filter(contact => contact.lastMessage || contact._id.toString() == roomChatId);
 
   contactsAsideList.sort((a, b) => {
+    if (!a.lastMessage) return 1;
+    if (!b.lastMessage) return -1;
     return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt)
   });
 
   contactsAsideList.forEach(contact => {
+    contact.users.forEach(user => {
+      if (user.user._id.toString() == userId) {
+        if (user.lastMessageSeen && user.lastMessageSeen._id.toString() == contact.lastMessage._id.toString()) {
+          contact.unread = false;
+        } else {
+          contact.unread = true;
+        }
+      } else {
+        if (user.lastMessageSeen && user.lastMessageSeen._id.toString() == contact.lastMessage._id.toString()) {
+          contact.seen = true;
+        } else {
+          contact.seen = false;
+        }
+      }
+    })
     contact.users = contact.users.filter(user => user.user._id.toString() != userId);
   });
 
@@ -63,12 +83,21 @@ module.exports.index = async (req, res, next) => {
   // return res.json(user.contactList)
   //! end get contact list
 
+  //! get contact list but have no messages
+  const contactList = user.contactList.map(contact => {
+    const contactRoom = contactsAsideList.find(contactAside => contactAside.typeRoom == "single" && contactAside.users[0].user._id.toString() == contact.user._id.toString());
+    if (!contactRoom) {
+      return contact;
+    }
+  }).filter(contact => contact);
+  // return res.json(contactList)
+  //! end get contact list but have no messages
 
   res.render('client/pages/messages/index', {
     pageTitle: 'Messages',
     activeTab: 'messages',
     contactsAsideList,
-    contactList: user.contactList
+    contactList: contactList
   })
 }
 
