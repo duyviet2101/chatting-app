@@ -1,3 +1,5 @@
+import * as Popper from 'https://cdn.jsdelivr.net/npm/@popperjs/core@^2/dist/esm/index.js'
+
 //! file-upload-with-preview
 const upload = new FileUploadWithPreview.FileUploadWithPreview('upload-image', {
   showDeleteButtonOnImages: true,
@@ -350,3 +352,45 @@ const intervalUpdateLastMessageSeenTime = setInterval(() => {
   }
 }, 1000 * 60);
 //! end interval update last message seen
+
+//! emoji picker
+//? show emoji picker
+const buttonIcon = document.querySelector('.button-emoji-picker');
+if (buttonIcon) {
+  const tooltip = document.querySelector('.tooltip');
+  Popper.createPopper(buttonIcon, tooltip);
+
+  const emojiContainer = document.querySelector('.emoji-container');
+
+  buttonIcon.onclick = () => {
+    emojiContainer.classList.toggle('shown');
+    tooltip.classList.toggle('shown');
+  }
+
+  if (emojiContainer) {
+    emojiContainer.onclick = () => {
+      tooltip.classList.remove('shown');
+      emojiContainer.classList.remove('shown');
+    }
+  }
+} 
+
+//? insert icon to input
+const emojiPicker = document.querySelector("emoji-picker");
+if (emojiPicker) {
+  const inputChat = document.querySelector('#tynChatInput');
+
+  emojiPicker.addEventListener("emoji-click", (event) => {
+    const icon = event.detail.unicode;
+    inputChat.value += icon;
+    inputChat.setSelectionRange(inputChat.value.length, inputChat.value.length)
+    inputChat.focus();
+    showTyping()
+  });
+
+  inputChat.addEventListener('keyup', (e) => {
+    if (e.key != 'Enter')
+      showTyping()
+  })
+}
+//! end emoji picker

@@ -175,4 +175,30 @@ textarea {
   background-size: contain;
 }
 
+.tooltip {
+  visibility: hidden;
+}
+
+.tooltip.shown {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip {
+  z-index: 10000;
+}
+
+.emoji-container {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background: #0000003f;
+  z-index: 9999;
+  transform: translateY(0);
+  display: none;
+}
+
+.emoji-container.shown {
+  display: block;
+}
 /*! end custom */
