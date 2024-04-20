@@ -44,14 +44,18 @@ block main
                           h6.name #{userContact.fullName}
                           span.typing.d-none typing ...
                         .tyn-media-row.has-dot-sap
-                          p.content(lastMessage)
-                            if (lastMessage)
+                          if (lastMessage)
+                            p.content(lastMessage)
                               if (lastMessage.user.toString() == user._id.toString())
                                 | You: #{lastMessage.content}
                               else
                                 | #{lastMessage.content}
-                          span.meta(lastTime) #{moment(lastMessage.createdAt).fromNow()}
-                          span.meta(seen class=`${contact.seen && !contact.unread && lastMessage.user.toString() == user._id.toString() ? '' : 'd-none'}`) Seen 
+                            span.meta(lastTime) #{moment(lastMessage.createdAt).fromNow()}
+                            span.meta(seen class=`${contact.seen && !contact.unread && lastMessage.user.toString() == user._id.toString() ? '' : 'd-none'}`) Seen 
+                          else 
+                            p.content(lastMessage) No messages
+                            span.meta(lastTime) N/A
+                            span.meta(seen class='d-none') Seen
                       .tyn-media-option.tyn-aside-item-option
                         ul.tyn-media-option-list
                           li.dropdown
@@ -68,170 +72,68 @@ block main
                                       path(d='M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6')
                                     span Mute Notifications
                                 li
-                                  a(href=`/contacts/profile/${user.username}`)
+                                  a(href=`/contacts/profile/${userContact.username}`)
                                     // person
                                     svg.bi.bi-person(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                                       path(d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z')
                                     span View Profile
                                 li.dropdown-divider
                                 li
-                                  a(href='#deleteChat' data-bs-toggle='modal')
+                                  a(href='#deleteChat' data-bs-toggle='modal' delete-messages data-room-id-delete-messages=`${contact._id.toString()}`)
                                     // trash
                                     svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                                       path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
                                       path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
                                     span Delete
                   // .tyn-aside-item
-              //- li.tyn-aside-item.js-toggle-main
-                .tyn-media-group
-                  .tyn-media.tyn-size-lg
-                    img(src='/images/avatar/2.jpg' alt='')
-                  .tyn-media-col
-                    .tyn-media-row
-                      h6.name Konstantin Frank
-                      .indicator.varified
-                        // check-circle-fill
-                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                          path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
-                    .tyn-media-row.has-dot-sap
-                      p.content Liked that disco music
-                      span.meta 1 days
-                  .tyn-media-option.tyn-aside-item-option
-                    ul.tyn-media-option-list
-                      li.dropdown
-                        .btn.btn-icon.btn-white.btn-pill.dropdown-toggle(data-bs-toggle='dropdown' data-bs-offset='0,0' data-bs-auto-close='outside')
-                          // three-dots
-                          svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                            path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
-                        .dropdown-menu.dropdown-menu-end
-                          ul.tyn-list-links
-                            li
-                              a(href='#')
-                                // check
-                                svg.bi.bi-check(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z')
-                                span Mark as Read
-                            li
-                              a(href='#')
-                                // bell
-                                svg.bi.bi-bell(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6')
-                                span Mute Notifications
-                            li
-                              a(href='contacts.html')
-                                // person
-                                svg.bi.bi-person(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z')
-                                span View Profile
-                            li.dropdown-divider
-                            li
-                              a(href='#callingScreen' data-bs-toggle='modal')
-                                // telephone
-                                svg.bi.bi-telephone(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z')
-                                span Audio Call
-                            li
-                              a(href='#videoCallingScreen' data-bs-toggle='modal')
-                                // camera-video
-                                svg.bi.bi-camera-video(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(fill-rule='evenodd' d='M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z')
-                                span Video Call
-                            li.dropdown-divider
-                            li
-                              a(href='#')
-                                // file-earmark-arrow-down
-                                svg.bi.bi-file-earmark-arrow-down(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z')
-                                  path(d='M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z')
-                                span Archive
-                            li
-                              a(href='#deleteChat' data-bs-toggle='modal')
-                                // trash
-                                svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
-                                  path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
-                                span Delete
-                            li
-                              a(href='#')
-                                // exclamation-triangle
-                                svg.bi.bi-exclamation-triangle(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z')
-                                  path(d='M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z')
-                                span Report
-              // .tyn-aside-item
-              //- li.tyn-aside-item.js-toggle-main.unread
-                .tyn-media-group
-                  .tyn-media.tyn-size-lg
-                    img(src='/images/avatar/3.jpg' alt='')
-                  .tyn-media-col
-                    .tyn-media-row
-                      h6.name Mathias Devos
-                    .tyn-media-row.has-dot-sap
-                      p.content Hey, how&apos;s it going?
-                      span.meta 2 days
-                  .tyn-media-option.tyn-aside-item-option
-                    ul.tyn-media-option-list
-                      li.dropdown
-                        .btn.btn-icon.btn-white.btn-pill.dropdown-toggle(data-bs-toggle='dropdown' data-bs-offset='0,0' data-bs-auto-close='outside')
-                          // three-dots
-                          svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                            path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
-                        .dropdown-menu.dropdown-menu-end
-                          ul.tyn-list-links
-                            li
-                              a(href='#')
-                                // check
-                                svg.bi.bi-check(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z')
-                                span Mark as Read
-                            li
-                              a(href='#')
-                                // bell
-                                svg.bi.bi-bell(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6')
-                                span Mute Notifications
-                            li
-                              a(href='contacts.html')
-                                // person
-                                svg.bi.bi-person(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z')
-                                span View Profile
-                            li.dropdown-divider
-                            li
-                              a(href='#callingScreen' data-bs-toggle='modal')
-                                // telephone
-                                svg.bi.bi-telephone(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.6 17.6 0 0 0 4.168 6.608 17.6 17.6 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.68.68 0 0 0-.58-.122l-2.19.547a1.75 1.75 0 0 1-1.657-.459L5.482 8.062a1.75 1.75 0 0 1-.46-1.657l.548-2.19a.68.68 0 0 0-.122-.58zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877z')
-                                span Audio Call
-                            li
-                              a(href='#videoCallingScreen' data-bs-toggle='modal')
-                                // camera-video
-                                svg.bi.bi-camera-video(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(fill-rule='evenodd' d='M0 5a2 2 0 0 1 2-2h7.5a2 2 0 0 1 1.983 1.738l3.11-1.382A1 1 0 0 1 16 4.269v7.462a1 1 0 0 1-1.406.913l-3.111-1.382A2 2 0 0 1 9.5 13H2a2 2 0 0 1-2-2zm11.5 5.175 3.5 1.556V4.269l-3.5 1.556zM2 4a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h7.5a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z')
-                                span Video Call
-                            li.dropdown-divider
-                            li
-                              a(href='#')
-                                // file-earmark-arrow-down
-                                svg.bi.bi-file-earmark-arrow-down(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z')
-                                  path(d='M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z')
-                                span Archive
-                            li
-                              a(href='#deleteChat' data-bs-toggle='modal')
-                                // trash
-                                svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
-                                  path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
-                                span Delete
-                            li
-                              a(href='#')
-                                // exclamation-triangle
-                                svg.bi.bi-exclamation-triangle(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z')
-                                  path(d='M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z')
-                                span Report
-              // .tyn-aside-item
+              else 
+                div.no-chats
+                  p.text-center.mt-3.mb-0 No chat found
+                  p.text-center.mt-0.mb-0 Select a contact to start a chat
+              each contact in contactList
+                - var userContact = contact.user
+                li.tyn-aside-item.js-toggle-main(contact-aside data-room-id=`${contact.room_chat_id.toString()}` class=`${contactsAsideList && contactsAsideList.length ? "d-none" : ""}`)
+                  .tyn-media-group
+                    a.tyn-media.tyn-size-lg(href=`/messages/${contact.room_chat_id.toString()}`)
+                      img(src=userContact.avatar alt='')
+                    a.tyn-media-col(href=`/messages/${contact.room_chat_id.toString()}`)
+                      .tyn-media-row
+                        h6.name #{userContact.fullName}
+                        span.typing.d-none typing ...
+                      .tyn-media-row.has-dot-sap
+                        p.content(lastMessage) No messages
+                        span.meta(lastTime) N/A
+                        span.meta.d-none(seen) Seen 
+                    .tyn-media-option.tyn-aside-item-option
+                      ul.tyn-media-option-list
+                        li.dropdown
+                          .btn.btn-icon.btn-white.btn-pill.dropdown-toggle(data-bs-toggle='dropdown' data-bs-offset='0,0' data-bs-auto-close='outside')
+                            // three-dots
+                            svg.bi.bi-three-dots(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                              path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
+                          .dropdown-menu.dropdown-menu-end
+                            ul.tyn-list-links
+                              li
+                                a(href=`/contacts/profile/${userContact.username}`)
+                                  // person
+                                  svg.bi.bi-person(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                    path(d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z')
+                                  span View Profile
+                              li.dropdown-divider
+                              li
+                                a(href='#deleteChat' data-bs-toggle='modal' delete-messages data-room-id-delete-messages=`${contact.room_chat_id.toString()}`)
+                                  // trash
+                                  svg.bi.bi-trash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                    path(d='M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z')
+                                    path(d='M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z')
+                                  span Delete
+                // .tyn-aside-item
+              else 
+                if (!contactsAsideList.length && !contactList.length)
+                  div.no-contacts
+                    p.text-center.mt-3.mb-0 No contacts found
+                    p.text-center.mt-0.mb-0
+                      a(href="/contacts") Add new contacts to start chatting
           // .tab-pane
         // .tab-content
       // .tyn-aside-body
@@ -1067,6 +969,26 @@ block main
                 // .tyn-media-group
               // li
           // .tyn-media-list
+        // .modal-body
+        button.btn.btn-md.btn-icon.btn-pill.btn-white.shadow.position-absolute.top-0.end-0.mt-n3.me-n3(data-bs-dismiss='modal')
+          // x-lg
+          svg.bi.bi-x-lg(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+            path(d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z')
+      // .modal-content
+    // .modal-dialog
+  // .modal
+  form#deleteChat.modal.fade(tabindex='-1' method='POST')
+    .modal-dialog.modal-dialog-centered.modal-sm
+      .modal-content.border-0
+        .modal-body
+          .py-4.px-4.text-center
+            h3 Delete chat
+            p.small Once you delete your copy of this conversation, it cannot be undone.
+            ul.tyn-list-inline.gap.gap-3.pt-1.justify-content-center
+              li
+                button.btn.btn-danger(type="submit" data-bs-dismiss='modal' btn-confirm) Delete
+              li
+                button.btn.btn-light(data-bs-dismiss='modal' btn-cancel) No
         // .modal-body
         button.btn.btn-md.btn-icon.btn-pill.btn-white.shadow.position-absolute.top-0.end-0.mt-n3.me-n3(data-bs-dismiss='modal')
           // x-lg

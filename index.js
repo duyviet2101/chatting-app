@@ -32,7 +32,6 @@ app.use(session({
     maxAge: 60000 
   },
 }));
-
 //! end middlewares
 
 //! databases

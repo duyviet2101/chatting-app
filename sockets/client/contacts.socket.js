@@ -159,9 +159,8 @@ module.exports = async (req, res, socket) => {
     //? create room
     let room = null;
     const existedRoom = await RoomChat.findOne({
-      users: {
-        $all: [userA._id, userB._id],
-        $size: 2
+      "users.user": {
+        $all: [userA._id, userB._id]
       },
       typeRoom: 'single'
     });
@@ -231,7 +230,8 @@ module.exports = async (req, res, socket) => {
       _id: userA._id,
       username: userA.username,
       fullName: userA.fullName,
-      avatar: userA.avatar
+      avatar: userA.avatar,
+      room_chat_id: room._id
     };
     socket.broadcast.emit('SERVER_RETURN_INFO_ACCEPT_REQUEST', {
       userId: userB._id,
@@ -243,7 +243,8 @@ module.exports = async (req, res, socket) => {
       _id: userB._id,
       username: userB.username,
       fullName: userB.fullName,
-      avatar: userB.avatar
+      avatar: userB.avatar,
+      room_chat_id: room._id
     };
     socket.emit('SERVER_RETURN_INFO_ACCEPT_REQUEST', {
       userId: userA._id,

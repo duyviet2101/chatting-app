@@ -8,4 +8,6 @@ router.get('/', asyncHandler(controller.index));
 
 router.get('/:roomChatId', asyncHandler(controller.show));
 
+router.delete('/:roomChatId/delete', asyncHandler(controller.deleteChats));
+
 module.exports = router;

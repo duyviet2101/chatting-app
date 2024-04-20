@@ -78,16 +78,18 @@ module.exports = async (req, res, socket) => {
       createdAt: "desc"
     }).lean();
 
-    const res = await RoomChat.findOneAndUpdate({
-      _id: roomChatId,
-      'users.user': userId
-    }, {
-      $set: {
-        'users.$.lastMessageSeen': lastMessage._id.toString()
-      }
-    }, {
-      new: true
-    })
+    if (lastMessage) {
+      const res = await RoomChat.findOneAndUpdate({
+        _id: roomChatId,
+        'users.user': userId
+      }, {
+        $set: {
+          'users.$.lastMessageSeen': lastMessage._id.toString()
+        }
+      }, {
+        new: true
+      })
+    }
 
     _io.to(roomChatId).emit('SERVER_RETURN_LAST_MESSAGE_SEEN', {
       userId,

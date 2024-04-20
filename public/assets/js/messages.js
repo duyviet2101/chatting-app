@@ -154,6 +154,10 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
       seen.classList.add('d-none');
     }
     lastTime.innerHTML = moment(createdAt).fromNow();
+
+    contactAside.classList.remove('d-none');
+    const asideList = document.querySelector('.tyn-aside-list');
+    asideList.insertBefore(contactAside, asideList.firstChild);
   }
 });
 //! end SERVER_RETURN_SEND_MESSAGE
@@ -235,7 +239,7 @@ socket.on('SERVER_RETURN_TYPING', async (data) => {
 
   }
   const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
-  if (contactAside) {
+  if (contactAside && userId != window.user._id) {
     if (isTyping) {
       contactAside.querySelector('.typing').classList.remove('d-none');
     } else {
@@ -256,24 +260,26 @@ socket.on('SERVER_RETURN_LAST_MESSAGE_SEEN', async (data) => {
     if (contactAside)
       contactAside.classList.remove('unread');
   } else {
-    let chatReply = document.querySelector('#tynReply');
-
-    chatReply.querySelectorAll('.seen').forEach(seen => {
-      seen.remove();
-    });
-
-    const lastMessage = chatReply.querySelector('.tyn-reply-item');
-
-    if (lastMessage && lastMessage.classList.contains('outgoing')) {
-      lastMessage.querySelector('.tyn-reply-group').insertAdjacentHTML("beforeend", `
-      <div class="seen col-12 text-end">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
-          <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0" />
-          <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
-        </svg>
-        ${fullName}
-      </div>
-      `);
+    if (roomChatId == window.roomChatId) {
+      let chatReply = document.querySelector('#tynReply');
+  
+      chatReply.querySelectorAll('.seen').forEach(seen => {
+        seen.remove();
+      });
+  
+      const lastMessage = chatReply.querySelector('.tyn-reply-item');
+  
+      if (lastMessage && lastMessage.classList.contains('outgoing')) {
+        lastMessage.querySelector('.tyn-reply-group').insertAdjacentHTML("beforeend", `
+        <div class="seen col-12 text-end">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-circle" viewBox="0 0 16 16">
+            <path d="M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0" />
+            <path d="M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+          </svg>
+          ${fullName}
+        </div>
+        `);
+      }
 
       const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
       if (contactAside && !contactAside.classList.contains('unread')) {
@@ -284,3 +290,21 @@ socket.on('SERVER_RETURN_LAST_MESSAGE_SEEN', async (data) => {
   }
 });
 //! end SERVER_RETURN_LAST_MESSAGE_SEEN
+
+//! delete messages
+const deleteMessagesBtns = document.querySelectorAll('[delete-messages]');
+if (deleteMessagesBtns && deleteMessagesBtns.length > 0) {
+  deleteMessagesBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const roomChatId = btn.getAttribute('data-room-id-delete-messages');
+
+      const formDeleteChat = document.querySelector('#deleteChat');
+      formDeleteChat.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        formDeleteChat.action = `/messages/${roomChatId}/delete?_method=DELETE`;
+        formDeleteChat.submit();
+      });
+    })
+  })
+}
+//! end delete messages

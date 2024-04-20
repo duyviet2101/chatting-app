@@ -108,16 +108,18 @@ module.exports.show = async (req, res, next) => {
     createdAt: 'desc'
   }).select('content images createdAt user').lean();
 
-  const newRoomChat = await RoomChat.findOneAndUpdate({
-    _id: roomChatId,
-    'users.user': userId
-  }, {
-    $set: {
-      'users.$.lastMessageSeen': lastMessage._id
-    }
-  }, {
-    new: true
-  }).lean();
+  if (lastMessage) {
+    const newRoomChat = await RoomChat.findOneAndUpdate({
+      _id: roomChatId,
+      'users.user': userId
+    }, {
+      $set: {
+        'users.$.lastMessageSeen': lastMessage._id
+      }
+    }, {
+      new: true
+    }).lean();
+  }
   //! end update lastMessageSeen
 
   //! messagesRoomChatSocket
@@ -150,9 +152,11 @@ module.exports.show = async (req, res, next) => {
     contactsAsideList[i].lastMessage = lastMessage || null;
   };
 
-  contactsAsideList = contactsAsideList.filter(contact => contact.lastMessage);
+  contactsAsideList = contactsAsideList.filter(contact => contact.lastMessage || contact._id.toString() == roomChatId);
 
   contactsAsideList.sort((a, b) => {
+    if (!a.lastMessage) return 1;
+    if (!b.lastMessage) return -1;
     return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt)
   });
 
@@ -192,8 +196,17 @@ module.exports.show = async (req, res, next) => {
   user.contactList.sort((a, b) => {
     return a.user.fullName.localeCompare(b.user.fullName)
   });
-  // return res.json(user.contactList)
   //! end get contact list
+  
+  //! get contact list but have no messages
+  const contactList = user.contactList.map(contact => {
+    const contactRoom = contactsAsideList.find(contactAside => contactAside.typeRoom == "single" && contactAside.users[0].user._id.toString() == contact.user._id.toString());
+    if (!contactRoom) {
+      return contact;
+    }
+  }).filter(contact => contact);
+  // return res.json(contactList)
+  //! end get contact list but have no messages
 
   //! get messages
   const chats = await Chat.find({
@@ -239,6 +252,33 @@ module.exports.show = async (req, res, next) => {
     chats: groupedChats,
     contactsAsideList,
     roomChatId,
-    contactList: user.contactList
+    contactList: contactList
   });
+}
+
+// [DELETE] /messages/:roomChatId/delete
+module.exports.deleteChats = async (req, res, next) => {
+  const userId = req.user._id;
+  const roomChatId = req.params.roomChatId;
+
+  const roomChat = await RoomChat.findOne({
+    _id: roomChatId,
+    users: {
+      $elemMatch: {
+        user: userId
+      }
+    }
+  });
+
+  if (!roomChat) {
+    req.flash('error', 'Room chat not found');
+    return res.redirect('/messages');
+  }
+
+  const result = await Chat.deleteMany({
+    room_chat_id: roomChatId
+  });
+
+  req.flash('success', 'Messages deleted successfully');
+  return res.redirect('/messages');
 }

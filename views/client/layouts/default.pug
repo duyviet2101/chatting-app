@@ -227,33 +227,13 @@ head
     // .modal-content
   // .modal-dialog
 // .modal
-#deleteChat.modal.fade(tabindex='-1')
-  .modal-dialog.modal-dialog-centered.modal-sm
-    .modal-content.border-0
-      .modal-body
-        .py-4.px-4.text-center
-          h3 Delete chat
-          p.small Once you delete your copy of this conversation, it cannot be undone.
-          ul.tyn-list-inline.gap.gap-3.pt-1.justify-content-center
-            li
-              button.btn.btn-danger(data-bs-dismiss='modal') Delete
-            li
-              button.btn.btn-light(data-bs-dismiss='modal') No
-      // .modal-body
-      button.btn.btn-md.btn-icon.btn-pill.btn-white.shadow.position-absolute.top-0.end-0.mt-n3.me-n3(data-bs-dismiss='modal')
-        // x-lg
-        svg.bi.bi-x-lg(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-          path(d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z')
-    // .modal-content
-  // .modal-dialog
-// .modal
 block modals
+script(src="/socket.io/socket.io.js")
+script(src="/assets/js/socket.js") 
 script(src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js")
 script(data-user=JSON.stringify(user)).
   window.user = JSON.parse(document.currentScript.getAttribute('data-user'));
 script(src='/assets/js/bundle.js?v131')
 script(src='/assets/js/app.js?v131')
-script(src="/socket.io/socket.io.js")
-script(src="/assets/js/socket.js") 
 script(src="/assets/js/contacts.js")
 block script
