@@ -138,10 +138,14 @@
         },
         typing: function(){
           socket.on('SERVER_RETURN_TYPING', async (data) => {
-            let chatBody = document.querySelector('#tynChatBody');
-            let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
-            let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
-            simpleBody.getScrollElement().scrollTop = height;
+            try {
+              let chatBody = document.querySelector('#tynChatBody');
+              let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
+              let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
+              simpleBody.getScrollElement().scrollTop = height;
+            } catch (error) {
+              console.log(error);
+            }
           });
         },
       },

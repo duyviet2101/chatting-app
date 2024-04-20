@@ -79,7 +79,7 @@ module.exports.show = async (req, res, next) => {
   const roomChatId = req.params.roomChatId;
   
   //! check room
-  const roomChat = await RoomChat.findOne({
+  let roomChat = await RoomChat.findOne({
     _id: roomChatId,
     users: {
       $elemMatch: {
@@ -92,15 +92,33 @@ module.exports.show = async (req, res, next) => {
     select: 'fullName username email phone avatar cover bio contactList groups gender statusOnline'
   }).lean();
 
-  roomChat.users = roomChat.users.filter(user => user.user._id.toString() != userId);
-
-  // return res.json(roomChat)
-
   if (!roomChat) {
     req.flash('errors', 'Room chat not found');
     return res.redirect('/messages')
   }
+  roomChat.users = roomChat.users.filter(user => user.user._id.toString() != userId);
+
+  // return res.json(roomChat)
   //! end check room
+
+  //! update lastMessageSeen
+  const lastMessage = await Chat.findOne({
+    room_chat_id: roomChatId
+  }).sort({
+    createdAt: 'desc'
+  }).select('content images createdAt user').lean();
+
+  const newRoomChat = await RoomChat.findOneAndUpdate({
+    _id: roomChatId,
+    'users.user': userId
+  }, {
+    $set: {
+      'users.$.lastMessageSeen': lastMessage._id
+    }
+  }, {
+    new: true
+  }).lean();
+  //! end update lastMessageSeen
 
   //! messagesRoomChatSocket
   socket(req, res);
@@ -116,6 +134,9 @@ module.exports.show = async (req, res, next) => {
   }).populate({
     path: 'users.user',
     select: 'fullName avatar username'
+  }).populate({
+    path: 'users.lastMessageSeen',
+    select: 'user room_chat_id'
   }).lean();
 
   for (let i = 0; i < contactsAsideList.length; i++) {
@@ -124,7 +145,7 @@ module.exports.show = async (req, res, next) => {
       room_chat_id: contactsAsideList[i]._id
     }).sort({
       createdAt: 'desc'
-    }).select('-_id content images createdAt user').lean();
+    }).select('content images createdAt user').lean();
 
     contactsAsideList[i].lastMessage = lastMessage || null;
   };
@@ -136,6 +157,15 @@ module.exports.show = async (req, res, next) => {
   });
 
   contactsAsideList.forEach(contact => {
+    contact.users.forEach(user => {
+      if (user.user._id.toString() == userId) {
+        if (user.lastMessageSeen && user.lastMessageSeen._id.toString() == contact.lastMessage._id.toString()) {
+          contact.unread = false;
+        } else {
+          contact.unread = true;
+        }
+      }
+    })
     contact.users = contact.users.filter(user => user.user._id.toString() != userId);
   });
 

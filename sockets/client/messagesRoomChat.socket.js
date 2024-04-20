@@ -34,7 +34,8 @@ module.exports = async (req, res, socket) => {
       fullName: fullName,
       content: content,
       avatar: avatar,
-      createdAt: message.createdAt
+      createdAt: message.createdAt,
+      roomChatId: roomChatId
     });
 
     //? end typing
@@ -42,7 +43,8 @@ module.exports = async (req, res, socket) => {
       userId: userId,
       fullName: fullName,
       avatar: avatar,
-      isTyping: false
+      isTyping: false,
+      roomChatId: roomChatId
     });
   });
   //! CLIENT_SEND_MESSAGE
@@ -60,11 +62,37 @@ module.exports = async (req, res, socket) => {
       userId: userId,
       fullName: fullName,
       avatar: avatar,
-      isTyping: isTyping
+      isTyping: isTyping,
+      roomChatId: roomChatId
     });
-
-    //? emit typing to client for aside list
-    
   });
   //! end CLIENT_SEND_TYPING
+
+  //! CLIENT_UPDATE_LAST_MESSAGE_SEEN
+  socket.on('CLIENT_UPDATE_LAST_MESSAGE_SEEN', async (data) => {
+    const userId = data.userId;
+    
+    const lastMessage = await Chat.findOne({
+      room_chat_id: roomChatId
+    }).sort({
+      createdAt: "desc"
+    }).lean();
+
+    const res = await RoomChat.findOneAndUpdate({
+      _id: roomChatId,
+      'users.user': userId
+    }, {
+      $set: {
+        'users.$.lastMessageSeen': lastMessage._id.toString()
+      }
+    }, {
+      new: true
+    })
+
+    _io.to(roomChatId).emit('SERVER_RETURN_LAST_MESSAGE_SEEN', {
+      userId,
+      roomChatId
+    });
+  });
+  //! end CLIENT_UPDATE_LAST_MESSAGE_SEEN
 };

@@ -29,7 +29,7 @@ const roomChatSchema = new mongoose.Schema({
         enum: ['admin', 'member'],
         default: 'member'
       },
-      messageSeen: {
+      lastMessageSeen: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Chat',
         default: null

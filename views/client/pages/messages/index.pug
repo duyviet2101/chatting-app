@@ -35,7 +35,7 @@ block main
                 if (contact.typeRoom == "single")
                   - var userContact = contact.users[0].user
                   - var lastMessage = contact.lastMessage
-                  li.tyn-aside-item.js-toggle-main(class=`${contact._id.toString() == roomChatId ? 'active' : ''}` contact-aside data-room-id=`${contact._id.toString()}`)
+                  li.tyn-aside-item.js-toggle-main(class=`${contact._id.toString() == roomChatId ? 'active' : ''} ${contact.unread ? 'unread' : ''}` contact-aside data-room-id=`${contact._id.toString()}`)
                     .tyn-media-group
                       a.tyn-media.tyn-size-lg(href=`/messages/${contact._id.toString()}`)
                         img(src=userContact.avatar alt='')
@@ -44,13 +44,14 @@ block main
                           h6.name #{userContact.fullName}
                           span.typing.d-none typing ...
                         .tyn-media-row.has-dot-sap
-                          p.content 
+                          p.content(lastMessage)
                             if (lastMessage)
                               if (lastMessage.user.toString() == user._id.toString())
                                 | You: #{lastMessage.content}
                               else
                                 | #{lastMessage.content}
-                          span.meta(lastMessage) #{moment(lastMessage.createdAt).fromNow()}
+                          span.meta(lastTime) #{moment(lastMessage.createdAt).fromNow()}
+                          span.meta.d-none(seen) Seen 
                       .tyn-media-option.tyn-aside-item-option
                         ul.tyn-media-option-list
                           li.dropdown
@@ -283,8 +284,7 @@ block main
                   .tyn-reply-group
                     each message in chat.messages
                       .tyn-reply-bubble
-                        .tyn-reply-text.w-100
-                          p.m-0 #{message.content}
+                        .tyn-reply-text.text-break #{message.content}
                         // tyn-reply-text
                         ul.tyn-reply-tools
                           li
@@ -300,13 +300,6 @@ block main
                                 path(d='M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3')
                             .dropdown-menu.dropdown-menu-xxs
                               ul.tyn-list-links
-                                //- li
-                                  a(href='#')
-                                    // pencil-square
-                                    svg.bi.bi-pencil-square(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                      path(d='M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z')
-                                      path(fill-rule='evenodd' d='M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z')
-                                    span Edit
                                 li
                                   a(href='#' delete-message data-id=message._id)
                                     // trash
@@ -332,8 +325,7 @@ block main
                         | #{chat.user.fullName}
                     each message in chat.messages
                       .tyn-reply-bubble
-                        .tyn-reply-text.w-100
-                          p.m-0 #{message.content}
+                        .tyn-reply-text.text-break #{message.content}
                         // tyn-reply-text
                         ul.tyn-reply-tools
                           li

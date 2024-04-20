@@ -15,15 +15,8 @@ module.exports = async (req, res, socket) => {
     }
   }).lean();
 
-  socket.on('CLIENT_SEND_TYPING', async (data) => {
-    const isTyping = data.isTyping;
-    const userId = data.userId;
-    const roomChatId = data.roomChatId;
-
-    socket.broadcast.emit('SERVER_RETURN_TYPING_ASIDE', {
-      userId,
-      isTyping: isTyping,
-      roomChatId
-    });
+  roomsChat.forEach(room => {
+    socket.join(room._id.toString());
   });
+
 };

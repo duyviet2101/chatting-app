@@ -6,6 +6,14 @@ if (chatSend) {
     showTyping();
   });
 
+  chatInput.addEventListener('focusin', () => {
+    //* update last message seen
+    socket.emit('CLIENT_UPDATE_LAST_MESSAGE_SEEN', {
+      userId: window.user._id,
+      roomChatId: roomChatId
+    });
+  })
+
   chatSend.addEventListener('click', () => {
     const content = chatInput.value
     if (content.trim() !== ''){
@@ -17,6 +25,11 @@ if (chatSend) {
         isTyping: false,
         userId: window.user._id,
         roomChatId: window.roomChatId
+      });
+      //* update last message seen
+      socket.emit('CLIENT_UPDATE_LAST_MESSAGE_SEEN', {
+        userId: window.user._id,
+        roomChatId: roomChatId
       });
     }
   });
@@ -30,6 +43,7 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
   const content = data.content;
   const avatar = data.avatar;
   const createdAt = data.createdAt;
+  const roomChatId = data.roomChatId;
 
   let chatReply = document.querySelector('#tynReply');
   let chatBody = document.querySelector('#tynChatBody');
@@ -64,59 +78,79 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
         </li>
     </ul>
   `;
-  if (userId !== window.user._id) {
-    let chatBubble = `
-    <div class="tyn-reply-bubble">
-        <div class="tyn-reply-text w-100">
-            <p class="m-0"> ${content} </p>
+  if (window.roomChatId == roomChatId) { //? update chat body
+    if (userId !== window.user._id) {
+      let chatBubble = `
+      <div class="tyn-reply-bubble flex-wrap">
+          <div class="tyn-reply-text text-break">
+              ${content}
+          </div>
+          ${chatActions}
+      </div>
+      `;
+      let incomingWraper = `
+      <div class="tyn-reply-item incoming">
+        <div class="tyn-reply-avatar">
+          <div class="tyn-media tyn-size-md tyn-circle">
+            <img src="${avatar}" alt="${fullName}">
+          </div>
         </div>
-        ${chatActions}
-    </div>
-    `;
-    let incomingWraper = `
-    <div class="tyn-reply-item incoming">
-      <div class="tyn-reply-avatar">
-        <div class="tyn-media tyn-size-md tyn-circle">
-          <img src="${avatar}" alt="${fullName}">
+        <div class="tyn-reply-group">
+          <div class="tyn-reply-fullName">
+            <span class="name fs-6 fw-light">${fullName}</span>
+            <!-- <span class="fs-6 fw-light">${new Date(createdAt).toLocaleString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false })}</span> -->
+          </div>
         </div>
       </div>
-      <div class="tyn-reply-group">
-        <div class="tyn-reply-fullName">
-          <span class="name fs-6 fw-light">${fullName}</span>
+      `;
+
+      if(!chatReply.querySelector('.tyn-reply-item')?.classList.contains('incoming')){
+        chatReply.insertAdjacentHTML("afterbegin", incomingWraper);
+        chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
+      }else{
+        chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
+      }
+    } else {
+      let chatBubble = `
+      <div class="tyn-reply-bubble">
+          <div class="tyn-reply-text text-break">
+            ${content}
+          </div>
+          ${chatActions}
+      </div>
+      `;
+      let outgoingWraper = `
+      <div class="tyn-reply-item outgoing">
+        <div class="tyn-reply-group">
           <!-- <span class="fs-6 fw-light">${new Date(createdAt).toLocaleString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false })}</span> -->
         </div>
       </div>
-    </div>
-    `;
+      `;
 
-    if(!chatReply.querySelector('.tyn-reply-item')?.classList.contains('incoming')){
-      chatReply.insertAdjacentHTML("afterbegin", incomingWraper);
-      chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
-    }else{
-      chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
+      if(!chatReply.querySelector('.tyn-reply-item')?.classList.contains('outgoing')){
+        chatReply.insertAdjacentHTML("afterbegin", outgoingWraper);
+        chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
+      }else{
+        chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
+      }
     }
-  } else {
-    let chatBubble = `
-    <div class="tyn-reply-bubble">
-        <div class="tyn-reply-text w-100">
-          <p class="m-0"> ${content} </p>
-        </div>
-        ${chatActions}
-    </div>
-    `;
-    let outgoingWraper = `
-    <div class="tyn-reply-item outgoing">
-      <div class="tyn-reply-group">
-        <!-- <span class="fs-6 fw-light">${new Date(createdAt).toLocaleString('en-GB', {hour: '2-digit', minute: '2-digit', hour12: false })}</span> -->
-      </div>
-    </div>
-    `;
 
-    if(!chatReply.querySelector('.tyn-reply-item')?.classList.contains('outgoing')){
-      chatReply.insertAdjacentHTML("afterbegin", outgoingWraper);
-      chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
-    }else{
-      chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
+    //? update aside list contact
+    const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
+    if (contactAside) {
+      const lastMessage = contactAside.querySelector('[lastMessage]');
+      const lastTime = contactAside.querySelector('[lastTime]');
+      const seen = contactAside.querySelector('[seen]');
+
+      if (userId !== window.user._id) {
+        lastMessage.innerHTML = content;
+        contactAside.classList.add('unread');
+    } else {
+        lastMessage.innerHTML = 'You: ' + content;
+        contactAside.classList.remove('unread');
+        seen.classList.add('d-none');
+      }
+      lastTime.innerHTML = moment(createdAt).fromNow();
     }
   }
 });
@@ -147,13 +181,14 @@ socket.on('SERVER_RETURN_TYPING', async (data) => {
   const fullName = data.fullName;
   const avatar = data.avatar;
   const isTyping = data.isTyping;
+  const roomChatId = data.roomChatId;
 
-  if (userId != window.user._id) {
+  if (userId != window.user._id && roomChatId == window.roomChatId) {
     let chatReply = document.querySelector('#tynReply');
 
-    if (isTyping) {
+    if (isTyping) { //? show typing
       let typingWraper = `
-      <div class="tyn-reply-item typing">
+      <div class="tyn-reply-item typing" data-user-id=${userId}>
         <div class="tyn-reply-avatar">
           <div class="tyn-media tyn-size-md tyn-circle">
             <img src="${avatar}" alt="${fullName}">
@@ -186,21 +221,17 @@ socket.on('SERVER_RETURN_TYPING', async (data) => {
       }
       chatReply.insertAdjacentHTML("afterbegin", typingWraper);
       chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubble);
-    } else {
-      if (chatReply.querySelector('.tyn-reply-item')?.classList.contains('typing')) {
-        chatReply.querySelector('.tyn-reply-item').remove();
-      }
+    } else //? hide typing 
+    {
+      const typings = chatReply.querySelectorAll('.tyn-reply-item.typing');
+      typings.forEach(typing => {
+        if (typing.dataset.userId == userId) {
+          typing.remove();
+        }
+      });
     }
+
   }
-});
-//! end SERVER_RETURN_TYPING
-
-//! SERVER_RETURN_TYPING_ASIDE
-socket.on('SERVER_RETURN_TYPING_ASIDE', async (data) => {
-  const userId = data.userId;
-  const isTyping = data.isTyping;
-  const roomChatId = data.roomChatId;
-
   const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
   if (contactAside) {
     if (isTyping) {
@@ -210,4 +241,38 @@ socket.on('SERVER_RETURN_TYPING_ASIDE', async (data) => {
     }
   }
 });
-//! end SERVER_RETURN_TYPING_ASIDE
+//! end SERVER_RETURN_TYPING
+
+//! SERVER_RETURN_LAST_MESSAGE_SEEN
+socket.on('SERVER_RETURN_LAST_MESSAGE_SEEN', async (data) => {
+  const userId = data.userId;
+  const roomChatId = data.roomChatId;
+  if (userId == window.user._id) {
+    const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
+    if (contactAside)
+      contactAside.classList.remove('unread');
+  } else {
+    let chatReply = document.querySelector('#tynReply');
+
+    chatReply.querySelectorAll('.seen').forEach(seen => {
+      seen.remove();
+    });
+
+    const lastMessage = chatReply.querySelector('.tyn-reply-item');
+
+    if (lastMessage && lastMessage.classList.contains('outgoing')) {
+      lastMessage.querySelector('.tyn-reply-group').insertAdjacentHTML("beforeend", `
+      <div class="seen col-12 text-end">
+        <span>seen</span>
+      </div>
+      `);
+
+      const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
+      if (contactAside) {
+        contactAside.querySelector('[seen]').classList.remove('d-none');
+      }
+    }
+
+  }
+});
+//! end SERVER_RETURN_LAST_MESSAGE_SEEN
