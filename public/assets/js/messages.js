@@ -60,7 +60,6 @@ if (chatSend) {
   chatSend.addEventListener('click', () => {
     const content = chatInput.value
     const images = upload.cachedFileArray || [];
-    console.log(images);
 
     if (content.trim() !== '' || images.length > 0){
       socket.emit('CLIENT_SEND_MESSAGE', {
@@ -340,12 +339,11 @@ socket.on('SERVER_RETURN_LAST_MESSAGE_SEEN', async (data) => {
         `);
       }
 
-      const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
-      if (contactAside && !contactAside.classList.contains('unread')) {
-        contactAside.querySelector('[seen]').classList.remove('d-none');
-      }
     }
-
+    const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
+    if (contactAside && !contactAside.classList.contains('unread')) {
+      contactAside.querySelector('[seen]').classList.remove('d-none');
+    }
   }
 });
 //! end SERVER_RETURN_LAST_MESSAGE_SEEN

@@ -36,7 +36,7 @@ module.exports.index = async (req, res, next) => {
     contactsAsideList[i].lastMessage = lastMessage || null;
   };
 
-  contactsAsideList = contactsAsideList.filter(contact => contact.lastMessage || contact._id.toString() == roomChatId);
+  contactsAsideList = contactsAsideList.filter(contact => contact.lastMessage);
 
   contactsAsideList.sort((a, b) => {
     if (!a.lastMessage) return 1;

@@ -129,12 +129,16 @@
           });
         },
         receive: function(){
-          socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
-            let chatBody = document.querySelector('#tynChatBody');
-            let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
-            let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
-            simpleBody.getScrollElement().scrollTop = height;
-          });
+          try {
+            socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
+              let chatBody = document.querySelector('#tynChatBody');
+              let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
+              let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
+              simpleBody.getScrollElement().scrollTop = height;
+            });
+          } catch (error) {
+            console.log(error);
+          }
         },
         typing: function(){
           socket.on('SERVER_RETURN_TYPING', async (data) => {
@@ -498,6 +502,12 @@ const createAlertError = (message) => {
 }
 
 const createAlertNotice = (message) => {
+  const currentAlert = document.querySelectorAll('.alert[show-alert]');
+  if (currentAlert && currentAlert.length > 0) {
+    currentAlert.forEach(item => {
+      item.remove();
+    })
+  }
   // ! alert
   const alert = document.createElement("div");
   alert.classList.add("alert", "alert-primary");
@@ -583,4 +593,18 @@ if (updateImageTrigger && updateImageTrigger.length > 0) {
   })
 }
 //! end .update-image-trigger
+
+socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
+  const userId = data.userId;
+  const fullName = data.fullName;
+  const content = data.content;
+  const avatar = data.avatar;
+  const createdAt = data.createdAt;
+  const roomChatId = data.roomChatId;
+  const images = data.images;
+
+  if (userId !== window.user._id) {
+    createAlertNotice(`${fullName}: ${content ? content : images.length + ' images'}`);
+  }
+});
 //end-js
