@@ -8,7 +8,7 @@ const flash = require('express-flash');
 const methodOverride = require('method-override');
 const { Server } = require('socket.io');
 const { createServer } = require('node:http');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 const app = express();
 const port = process.env.PORT || 3066;
@@ -58,7 +58,7 @@ app.use(flash());
 //! end flash
 
 //! locals
-app.locals.moment = moment
+app.locals.moment = moment.tz.setDefault('Asia/Ho_Chi_Minh');
 //! end locals
 
 //! routes

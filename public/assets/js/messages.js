@@ -1,16 +1,19 @@
 import * as Popper from 'https://cdn.jsdelivr.net/npm/@popperjs/core@^2/dist/esm/index.js'
 
 //! file-upload-with-preview
-const upload = new FileUploadWithPreview.FileUploadWithPreview('upload-image', {
-  showDeleteButtonOnImages: true,
-  text: {
-    chooseFile: 'Chọn ảnh',
-    browse: 'Chọn ảnh',
-    selectedCount: `file đã chọn`,
-  },
-  multiple: true,
-  maxFileCount: 6,
-});
+let upload;
+if (document.querySelector('[data-upload-id="upload-image"]')) {
+  upload = new FileUploadWithPreview.FileUploadWithPreview('upload-image', {
+    showDeleteButtonOnImages: true,
+    text: {
+      chooseFile: 'Chọn ảnh',
+      browse: 'Chọn ảnh',
+      selectedCount: `file đã chọn`,
+    },
+    multiple: true,
+    maxFileCount: 6,
+  });
+}
 //! end file-upload-with-preview
 
 //! SERVER_RETURN_STATUS_ONLINE_USER
@@ -180,10 +183,16 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
       </div>
       `;     
 
-      if(!chatReply.querySelector('.tyn-reply-item')?.classList.contains('outgoing')){
-        chatReply.insertAdjacentHTML("afterbegin", outgoingWraper);
+      if(chatReply.querySelector('.tyn-reply-item')?.classList.contains('outgoing')){
         chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubbleText + chatBubbleImages);
-      }else{
+      } else if (chatReply.querySelector('.tyn-reply-item')?.classList.contains('typing')) {
+        const typing = chatReply.querySelector('.tyn-reply-item.typing');
+        chatReply.insertAdjacentHTML("afterbegin", outgoingWraper);
+        chatReply.querySelector('.tyn-reply-item.outgoing .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubbleText + chatBubbleImages);
+        chatReply.insertBefore(typing, chatReply.firstChild);
+      }
+      else{
+        chatReply.insertAdjacentHTML("afterbegin", outgoingWraper);
         chatReply.querySelector('.tyn-reply-item .tyn-reply-group').insertAdjacentHTML("beforeend", chatBubbleText + chatBubbleImages);
       }
     }
@@ -217,6 +226,9 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
     const asideList = document.querySelector('.tyn-aside-list');
     asideList.insertBefore(contactAside, asideList.firstChild);
   }
+
+  const countMessages = document.querySelector('[notifications-messages] .count-messages');
+  countMessages.innerHTML = document.querySelectorAll('[contact-aside].unread').length;
 });
 //! end SERVER_RETURN_SEND_MESSAGE
 
@@ -317,6 +329,8 @@ socket.on('SERVER_RETURN_LAST_MESSAGE_SEEN', async (data) => {
     const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
     if (contactAside)
       contactAside.classList.remove('unread');
+    const countMessages = document.querySelector('[notifications-messages] .count-messages');
+    countMessages.innerHTML = document.querySelectorAll('[contact-aside].unread').length;
   } else {
     if (roomChatId == window.roomChatId) {
       let chatReply = document.querySelector('#tynReply');
@@ -402,21 +416,23 @@ if (buttonIcon) {
 } 
 
 //? insert icon to input
-const emojiPicker = document.querySelector("emoji-picker");
-if (emojiPicker) {
-  const inputChat = document.querySelector('#tynChatInput');
+if (document.querySelector('#tynChatInput')) {
+  const emojiPicker = document.querySelector("emoji-picker");
+  if (emojiPicker) {
+    const inputChat = document.querySelector('#tynChatInput');
 
-  emojiPicker.addEventListener("emoji-click", (event) => {
-    const icon = event.detail.unicode;
-    inputChat.value += icon;
-    inputChat.setSelectionRange(inputChat.value.length, inputChat.value.length)
-    inputChat.focus();
-    showTyping()
-  });
-
-  inputChat.addEventListener('keyup', (e) => {
-    if (e.key != 'Enter')
+    emojiPicker.addEventListener("emoji-click", (event) => {
+      const icon = event.detail.unicode;
+      inputChat.value += icon;
+      inputChat.setSelectionRange(inputChat.value.length, inputChat.value.length)
+      inputChat.focus();
       showTyping()
-  })
+    });
+
+    inputChat.addEventListener('keyup', (e) => {
+      if (e.key != 'Enter')
+        showTyping()
+    })
+  }
 }
 //! end emoji picker

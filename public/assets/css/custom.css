@@ -93,6 +93,18 @@ textarea {
   font-size: 12px;
   font-weight: 600;
 }
+
+[notifications-messages] .count-messages {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ff0000;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 5px;
+  font-size: 12px;
+  font-weight: 600;
+}
 /* end notification */
 
 /* box-typing */

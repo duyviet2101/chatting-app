@@ -426,6 +426,91 @@ socket.on('SERVER_RETURN_INFO_ACCEPT_REQUEST', data => {
         addEventRemoveContact(removeContactBtn);
       }
     }
+
+    const infoUserMain = document.querySelector(`.tyn-profile-info[data-info-user-id="${infoUser._id}"]`);
+    if (infoUserMain) {
+      const action = infoUserMain.querySelector('.tyn-media-multiple.action');
+      action.innerHTML = `
+        <a class="btn btn-primary" href="/messages/${infoUser.room_chat_id}">
+        <!-- envelope-fill--><svg class="bi bi-chat-text-fill" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+          fill="currentColor" viewBox="0 0 16 16">
+          <path
+            d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M4.5 5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1z">
+          </path>
+        </svg><span>Message</span></a>
+      `;
+    }
+
+    //! insert contact to aside list /messages
+    const asideMessagesList = document.querySelector('.tyn-aside-list.messages-aside-list');
+    if (asideMessagesList) {
+      const contactAside = document.querySelector(`[contact-aside][data-room-id="${roomChatId}"]`);
+      if (contactAside) {
+        return;
+      }
+      const html = `
+        <li class="tyn-aside-item js-toggle-main d-none" contact-aside data-room-id="${infoUser.room_chat_id}"
+          data-user-id="${infoUser._id}">
+          <div class="tyn-media-group"><a class="tyn-media tyn-size-lg" href="/messages/${infoUser.room_chat_id}"><img
+                src="${infoUser.avatar}" alt=""></a><a class="tyn-media-col"
+              href="/messages/${infoUser.room_chat_id}">
+              <div class="tyn-media-row">
+                <h6 class="name">${infoUser.fullName}</h6><span class="typing d-none">typing ...</span>
+                <div class="indicator statusOnlineAside ${infoUser.statusOnline == 'online' ? 'online' : 'offline'}">
+                  <!-- check-circle-fill--><svg class="bi bi-circle-fill" xmlns="http://www.w3.org/2000/svg" width="16"
+                    height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <circle cx="8" cy="8" r="8"></circle>
+                  </svg></div>
+              </div>
+              <div class="tyn-media-row has-dot-sap">
+                <p class="content" lastmessage="">No messages</p>
+                <span class="meta" lasttime="" data-time="">N/A</span
+                ><span class="meta d-none" seen="">Seen </span>
+              </div>
+            </a>
+            <div class="tyn-media-option tyn-aside-item-option">
+              <ul class="tyn-media-option-list">
+                <li class="dropdown">
+                  <div class="btn btn-icon btn-white btn-pill dropdown-toggle" data-bs-toggle="dropdown" data-bs-offset="0,0"
+                    data-bs-auto-close="outside">
+                    <!-- three-dots--><svg class="bi bi-three-dots" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                      fill="currentColor" viewBox="0 0 16 16">
+                      <path
+                        d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3">
+                      </path>
+                    </svg></div>
+                  <div class="dropdown-menu dropdown-menu-end">
+                    <ul class="tyn-list-links">
+                      <li><a href="/contacts/profile/${infoUser.username}">
+                          <!-- person--><svg class="bi bi-person" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="currentColor" viewBox="0 0 16 16">
+                            <path
+                              d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z">
+                            </path>
+                          </svg><span>View Profile</span></a></li>
+                      <li class="dropdown-divider"></li>
+                      <li><a href="#deleteChat" data-bs-toggle="modal" delete-messages=""
+                          data-room-id-delete-messages="${infoUser.room_chat_id}">
+                          <!-- trash--><svg class="bi bi-trash" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                            fill="currentColor" viewBox="0 0 16 16">
+                            <path
+                              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z">
+                            </path>
+                            <path
+                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z">
+                            </path>
+                          </svg><span>Delete</span></a></li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </li>
+      `;
+      asideMessagesList.insertAdjacentHTML('beforeend', html);
+    }
+    //! end insert contact to aside list /messages
   }
 });
 //! end SERVER_RETURN_INFO_ACCEPT_REQUEST

@@ -3,7 +3,7 @@ const messagesRoomChatSocket = require('./messagesRoomChat.socket');
 const messagesAppSocket = require('./messagesApp.socket');
 const User = require('../../models/user.model');
 
-module.exports = async (req, res) => {
+module.exports = async (req, res, next) => {
   _io.once('connection', async (socket) => {
     console.log('a user connected:::', socket.id);
 
@@ -46,4 +46,6 @@ module.exports = async (req, res) => {
       messagesRoomChatSocket(req, res, socket);
 
   });
+
+  next();
 }

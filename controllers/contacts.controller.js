@@ -6,7 +6,7 @@ const socket = require('../sockets/client/index.socket');
 // [GET] /contacts
 module.exports.index = async (req, res, next) => {
   //! socket.io
-  socket(req, res);
+  // socket(req, res);
   //! end socket.io
 
   const user = await User.findOne({
@@ -88,7 +88,7 @@ module.exports.index = async (req, res, next) => {
 // [GET] /contacts/profile/:username
 module.exports.profile = async (req, res, next) => {
   //! socket.io
-  socket(req, res);
+  // socket(req, res);
   //! end socket.io
 
   const user = await User.findOne({

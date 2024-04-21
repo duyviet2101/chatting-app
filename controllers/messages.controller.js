@@ -8,7 +8,7 @@ const socket = require('../sockets/client/index.socket');
 module.exports.index = async (req, res, next) => {
   const userId = req.user._id;
 
-  socket(req, res);
+  // socket(req, res);
 
   //! get aside list contact and messages
   let contactsAsideList = await RoomChat.find({
@@ -73,7 +73,7 @@ module.exports.index = async (req, res, next) => {
   .select('contactList')
   .populate({
     path: 'contactList.user',
-    select: 'fullName username avatar'
+    select: 'fullName username avatar statusOnline'
   })
   .lean();
 
@@ -152,7 +152,7 @@ module.exports.show = async (req, res, next) => {
   //! end update lastMessageSeen
 
   //! messagesRoomChatSocket
-  socket(req, res);
+  // socket(req, res);
   //! end messagesRoomChatSocket
 
   //! get aside list contact and messages
@@ -218,7 +218,7 @@ module.exports.show = async (req, res, next) => {
   .select('contactList')
   .populate({
     path: 'contactList.user',
-    select: 'fullName username avatar'
+    select: 'fullName username avatar statusOnline'
   })
   .lean();
 

@@ -126,13 +126,13 @@ module.exports = async (req, res, socket) => {
   //! user accept request contact
   socket.on('CLIENT_ACCEPT_REQUEST_CONTACT', async (username) => {
 
-    const userA = await User.findOne({ // user accept request
+    let userA = await User.findOne({ // user accept request
       _id: req.user._id,
       deleted: false,
       statusAccount: 'active'
     });
 
-    const userB = await User.findOne({ // user send request
+    let userB = await User.findOne({ // user send request
       username: username,
       deleted: false,
       statusAccount: 'active',
@@ -150,8 +150,26 @@ module.exports = async (req, res, socket) => {
       return;
     }
 
-    userA.contactRequestsReceived = userA.contactRequestsReceived.filter(contact => contact.toString() !== userB._id.toString());
-    userB.contactRequestsSent = userB.contactRequestsSent.filter(contact => contact.toString() !== userA._id.toString());
+    // userA.contactRequestsReceived = userA.contactRequestsReceived.filter(contact => contact.toString() !== userB._id.toString());
+    userA = await User.findOneAndUpdate({
+      _id: userA._id
+    }, {
+      $pull: {
+        contactRequestsReceived: userB._id
+      }
+    }, {
+      new: true
+    });
+    // userB.contactRequestsSent = userB.contactRequestsSent.filter(contact => contact.toString() !== userA._id.toString());
+    userB = await User.findOneAndUpdate({
+      _id: userB._id
+    }, {
+      $pull: {
+        contactRequestsSent: userA._id
+      }
+    }, {
+      new: true
+    });
 
     //? create room
     let room = null;
@@ -178,21 +196,34 @@ module.exports = async (req, res, socket) => {
       await room.save();
     }
 
-    userA.contactList.push({
-      user: userB._id,
-      room_chat_id: room._id,
-      addedAt: new Date()
+    userA = await User.findOneAndUpdate({
+      _id: userA._id
+    }, {
+      $push: {
+        contactList: {
+          user: userB._id,
+          room_chat_id: room._id,
+          addedAt: new Date()
+        }
+      }
+    }, {
+      new: true
     });
 
-    userB.contactList.push({
-      user: userA._id,
-      room_chat_id: room._id,
-      addedAt: new Date()
+    userB = await User.findOneAndUpdate({
+      _id: userB._id
+    }, {
+      $push: {
+        contactList: {
+          user: userA._id,
+          room_chat_id: room._id,
+          addedAt: new Date()
+        }
+      }
+    }, {
+      new: true
     });
     //? end create room
-
-    await userA.save();
-    await userB.save();
 
     //? emit updated length contactRequestsReceived to userA
     const lengthContactRequestsReceived = userA.contactRequestsReceived.length;
@@ -228,7 +259,8 @@ module.exports = async (req, res, socket) => {
       username: userA.username,
       fullName: userA.fullName,
       avatar: userA.avatar,
-      room_chat_id: room._id
+      room_chat_id: room._id,
+      statusOnline: userA.statusOnline  
     };
     socket.broadcast.emit('SERVER_RETURN_INFO_ACCEPT_REQUEST', {
       userId: userB._id,
@@ -241,7 +273,8 @@ module.exports = async (req, res, socket) => {
       username: userB.username,
       fullName: userB.fullName,
       avatar: userB.avatar,
-      room_chat_id: room._id
+      room_chat_id: room._id,
+      statusOnline: userB.statusOnline
     };
     socket.emit('SERVER_RETURN_INFO_ACCEPT_REQUEST', {
       userId: userA._id,

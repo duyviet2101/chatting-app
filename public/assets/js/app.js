@@ -129,28 +129,34 @@
           });
         },
         receive: function(){
-          try {
+          const chatReply = document.querySelector('#tynReply');
+          if (chatReply) {
             socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
-              let chatBody = document.querySelector('#tynChatBody');
-              let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
-              let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
-              simpleBody.getScrollElement().scrollTop = height;
+              try {
+                let chatBody = document.querySelector('#tynChatBody');
+                let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
+                let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
+                simpleBody.getScrollElement().scrollTop = height;
+              } catch (error) {
+                console.log(error);
+              }
             });
-          } catch (error) {
-            console.log(error);
           }
         },
         typing: function(){
-          socket.on('SERVER_RETURN_TYPING', async (data) => {
-            try {
-              let chatBody = document.querySelector('#tynChatBody');
-              let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
-              let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
-              simpleBody.getScrollElement().scrollTop = height;
-            } catch (error) {
-              console.log(error);
-            }
-          });
+          const chatReply = document.querySelector('#tynReply');
+          if (chatReply) {
+            socket.on('SERVER_RETURN_TYPING', async (data) => {
+              try {
+                let chatBody = document.querySelector('#tynChatBody');
+                let simpleBody = SimpleBar.instances.get(document.querySelector('#tynChatBody'));
+                let height = chatBody.querySelector('.simplebar-content > *').scrollHeight;
+                simpleBody.getScrollElement().scrollTop = height;
+              } catch (error) {
+                console.log(error);
+              }
+            });
+          } 
         },
       },
       item : function(){
@@ -525,6 +531,33 @@ const createAlertNotice = (message) => {
   // ! end alert
 }
 
+const createNotiMessage = (message, roomChatId) => {
+  const currentAlert = document.querySelectorAll('.alert[show-alert]');
+  if (currentAlert && currentAlert.length > 0) {
+    currentAlert.forEach(item => {
+      item.remove();
+    })
+  }
+  // ! alert
+  const alert = document.createElement("div");
+  alert.classList.add("alert", "alert-primary");
+  alert.setAttribute("show-alert", "");
+  alert.setAttribute("role", "alert");
+  alert.innerHTML = `
+    <a href="/messages/${roomChatId}" class="alert-link">${message}</a> 
+    <span close-alert>X</span>
+  `;
+  const closeAlert = alert.querySelector("[close-alert]");
+  document.body.appendChild(alert);
+  setTimeout(() => {
+      alert.classList.add("alert-hidden")
+  }, 5000);
+  closeAlert.addEventListener("click", () => {
+      alert.classList.add("alert-hidden")
+  })
+  // ! end alert
+}
+
 //! end show alert
 //! hash active tab
 document.addEventListener('DOMContentLoaded', function () {
@@ -604,7 +637,12 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
   const images = data.images;
 
   if (userId !== window.user._id) {
-    createAlertNotice(`${fullName}: ${content ? content : images.length + ' images'}`);
+    createNotiMessage(`${fullName}: ${content ? content + (images.length ? ' and ' + images.length + ' images' : '') : images.length + ' images'}`, roomChatId);
   }
 });
 //end-js
+
+document.addEventListener('DOMContentLoaded', function () {
+  const countMessages = document.querySelector('[notifications-messages] .count-messages');
+  countMessages.innerHTML = document.querySelectorAll('[contact-aside].unread').length;
+});
