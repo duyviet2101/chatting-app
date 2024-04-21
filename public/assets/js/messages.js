@@ -436,3 +436,84 @@ if (document.querySelector('#tynChatInput')) {
   }
 }
 //! end emoji picker
+
+//! search contactList
+const searchContactList = document.querySelector('#search-contact-list');
+if (searchContactList) {
+  const input = searchContactList.querySelector('#input-search');
+  const list = searchContactList.querySelector('.tyn-media-list');
+
+  let timeout;
+  input.addEventListener('input', () => {
+    list.innerHTML = `
+      <li>
+        <div class="tyn-media-group">
+            <div class="tyn-media-col">
+            <div class="tyn-media-row">
+              <h6 class="name">Searching...</h6>
+            </div>
+            </div>
+        </div>
+      </li>
+    `;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      const value = input.value.trim();
+      if (value) {
+        fetch(`/contacts/contactList/search?keyword=${value}`)
+          .then(response => response.json())
+          .then(data => {
+            const contacts = data.result;
+            list.innerHTML = '';
+            contacts.forEach(contact => {
+              list.insertAdjacentHTML('beforeend', `
+                <li>
+                  <a class="tyn-media-group" href="/messages/${contact.room_chat_id}">
+                    <div class="tyn-media">
+                      <img src="${contact.user.avatar}" alt="">
+                    </div>
+                    <div class="tyn-media-col">
+                      <div class="tyn-media-row">
+                        <h6 class="name">${contact.user.fullName}</h6>
+                      </div>
+                      <div class="tyn-media-row">
+                        <p class="content">@${contact.user.username}</p>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              `);
+            })
+
+            if (contacts.length === 0) {
+              list.innerHTML = `
+                <li>
+                  <div class="tyn-media-group">
+                      <div class="tyn-media-col">
+                      <div class="tyn-media-row">
+                        <h6 class="name">No results found</h6>
+                      </div>
+                      </div>
+                  </div>
+                </li>
+              `;
+            }
+          })
+          .catch(error => console.error(error));
+      } else {
+        list.innerHTML = `
+          <li>
+            <div class="tyn-media-group">
+                <div class="tyn-media-col">
+                <div class="tyn-media-row">
+                  <h6 class="name">Type a name to search</h6>
+                </div>
+                </div>
+            </div>
+          </li>
+        `;
+      }
+    }, 500);
+  });
+}
+//! end search contactList

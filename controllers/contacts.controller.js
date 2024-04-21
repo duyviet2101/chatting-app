@@ -2,6 +2,7 @@ const contactsSocket = require('../sockets/client/contacts.socket.js');
 const User = require('../models/user.model.js');
 
 const socket = require('../sockets/client/index.socket');
+const convertToSlug = require('../helpers/convertToSlug');
 
 // [GET] /contacts
 module.exports.index = async (req, res, next) => {
@@ -171,4 +172,36 @@ module.exports.profile = async (req, res, next) => {
     mutualContact,
     username: req.params.username
   })
+};
+
+// [GET] /contacts/contactList/search?keyword=""
+module.exports.searchContactList = async (req, res, next) => {
+  const keyword = req.query.keyword;
+
+  if (!keyword) {
+    return res.status(404).json({
+      error: 'Keyword is required!'
+    });
+  }
+
+  const user = await User.findOne({
+      _id: req.user._id,
+    }).populate({
+      path: 'contactList.user',
+      select: 'fullName username avatar'
+    })
+    .lean();
+
+  const keywordRegex = new RegExp(keyword, 'i');
+
+  const usernameSlug = convertToSlug(keyword);
+  const usernameRegex = new RegExp(usernameSlug, 'i');
+  
+  let contactList = user.contactList.filter(contact => {
+    return keywordRegex.test(contact.user.fullName) || usernameRegex.test(contact.user.username);
+  });
+
+  return res.status(200).json({
+    result: contactList
+  });
 };

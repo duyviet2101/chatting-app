@@ -9,11 +9,11 @@ block main
         .tyn-aside-head-tools
           ul.link-group.gap.gx-3
             li.dropdown
-              button.link(data-bs-toggle='modal' data-bs-target='#newChat')
-                // plus
-                svg.bi.bi-plus(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                  path(d='M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4')
-                span New
+              button.link(data-bs-toggle='modal' data-bs-target='#search-contact-list')
+                // search
+                svg.bi.bi-search(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                  path(d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0')
+                span Search contact
             // li
           // .link-group
         // .tyn-aside-head-tools
@@ -894,7 +894,7 @@ block main
           // .tyn-chat-content-aside
 
       // .tyn-chat-content
-  #newChat.modal.fade(tabindex='-1')
+  #search-contact-list.modal.fade(tabindex='-1')
     .modal-dialog.modal-dialog-centered.modal-sm
       .modal-content.border-0
         .modal-body.p-4
@@ -905,20 +905,14 @@ block main
                 // search
                 svg.bi.bi-search(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                   path(d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0')
-              input#search-contact.form-control.form-control-solid(type='text' placeholder='Search contact')
+              input#input-search.form-control.form-control-solid(type='text' placeholder='Search contact')
           ul.tyn-media-list.pt-4
-            each contact in contactList
-              - var userContact = contact.user
-              li
-                a.tyn-media-group(href=`/messages/${contact.room_chat_id}`)
-                  .tyn-media
-                    img(src=userContact.avatar alt='')
-                  .tyn-media-col
-                    .tyn-media-row
-                      h6.name #{userContact.fullName}
-                    .tyn-media-row
-                      p.content @#{userContact.username}
-                // .tyn-media-group
+            li
+              .tyn-media-group()
+                .tyn-media-col
+                  .tyn-media-row
+                    h6.name Type a name to search
+              // .tyn-media-group
               // li
           // .tyn-media-list
         // .modal-body

@@ -8,4 +8,6 @@ router.get('/', asyncHandler(contactsController.index));
 
 router.get('/profile/:username', asyncHandler(contactsController.profile));
 
+router.get('/contactList/search', asyncHandler(contactsController.searchContactList));
+
 module.exports = router;

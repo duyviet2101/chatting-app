@@ -153,12 +153,12 @@ textarea {
 }
 
 /* End box-typing */
-#newChat .modal-body ul li {
+#search-contact-list .modal-body ul li {
   padding: 10px;
   border-radius: 5px;
 }
 
-#newChat .modal-body ul li:hover {
+#search-contact-list .modal-body ul li:hover {
   background-color: var(--bg) !important;
 }
 
