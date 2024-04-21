@@ -205,3 +205,41 @@ module.exports.searchContactList = async (req, res, next) => {
     result: contactList
   });
 };
+
+// [GET] /search?keyword=""
+module.exports.search = async (req, res, next) => {
+  const keyword = req.query.keyword;
+
+  if (!keyword) {
+    return res.status(404).json({
+      error: 'Keyword is required!'
+    });
+  }
+
+  const keywordRegex = new RegExp(keyword, 'i');
+
+  const usernameString = convertToSlug(keyword);
+  const usernameRegex = new RegExp(usernameString, 'i');
+
+  const searchResult = await User.find({
+      deleted: false,
+      statusAccount: "active",
+      $or: [{
+          fullName: keywordRegex
+        },
+        {
+          username: usernameRegex
+        }
+      ],
+      _id: {
+        $ne: req.user._id
+      }
+    })
+    .select('fullName username avatar')
+    .limit(5)
+    .lean();
+
+  return res.status(200).json({
+    result: searchResult
+  });
+};

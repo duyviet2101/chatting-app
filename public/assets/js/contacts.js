@@ -4,12 +4,16 @@ const addEventSendRequest = (btn) => {
 
   btn.addEventListener('click', () => {
     socket.emit('CLIENT_SEND_REQUEST_CONTACT', username);
-    btn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
-          <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
-      </svg>
-    `;
-    btn.disabled = true;
+
+    const btns = document.querySelectorAll('[send-request][data-username="' + username + '"]');
+    btns.forEach(btn => {
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+            <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
+        </svg>
+      `;
+      btn.disabled = true;
+    });
   });
 };
 const sendRequestBtn = document.querySelectorAll('[send-request]');
@@ -177,6 +181,16 @@ const addEventCancelRequest = (btn) => {
 
   btn.addEventListener('click', () => {
     socket.emit('CLIENT_CANCEL_REQUEST_CONTACT', username);
+
+    const btns = document.querySelectorAll('[cancel-request][data-username="' + username + '"]');
+    btns.forEach(btn => {
+      btn.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check" viewBox="0 0 16 16">
+          <path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
+        </svg>
+      `;
+      btn.disabled = true;
+    });
   });
 };
 const cancelRequestBtn = document.querySelectorAll('[cancel-request]');
@@ -312,7 +326,7 @@ socket.on('SERVER_RETURN_INFO_REQUEST_SENT', data => {
       }
     }
   };
-    
+
 });
 //! end SERVER_RETURN_INFO_REQUEST_SENT
 
@@ -579,3 +593,87 @@ if (rejectRequestBtn && rejectRequestBtn.length > 0) {
   });
 }
 //! end reject request
+
+
+//! search user
+const searchUser = document.querySelector('#search-user');
+if (searchUser) {
+  const input = searchUser.querySelector('#input-search');
+  const list = searchUser.querySelector('.tyn-media-list');
+
+  let timeout;
+  input.addEventListener('input', () => {
+    list.innerHTML = `
+      <li>
+        <div class="tyn-media-group">
+            <div class="tyn-media-col">
+            <div class="tyn-media-row">
+              <h6 class="name">Searching...</h6>
+            </div>
+            </div>
+        </div>
+      </li>
+    `;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      const value = input.value.trim();
+      if (value) {
+        fetch(`/contacts/search?keyword=${value}`)
+          .then(response => response.json())
+          .then(data => {
+            const users = data.result;
+            list.innerHTML = '';
+            users.forEach(user => {
+              list.insertAdjacentHTML('beforeend', `
+            <li>
+              <a class="tyn-media-group" href="/contacts/profile/${user.username}">
+                <div class="tyn-media">
+                  <img src="${user.avatar}" alt="">
+                </div>
+                <div class="tyn-media-col">
+                  <div class="tyn-media-row">
+                    <h6 class="name">${user.fullName}</h6>
+                  </div>
+                  <div class="tyn-media-row">
+                    <p class="content">@${user.username}</p>
+                  </div>
+                </div>
+              </a>
+            </li>
+          `);
+            });
+
+            if (users.length == 0) {
+              list.innerHTML = `
+            <li>
+              <div class="tyn-media-group">
+                <div class="tyn-media-col">
+                  <div class="tyn-media-row">
+                    <h6 class="name">No results found</h6>
+                  </div>
+                </div>
+              </div>
+            </li>
+          `;
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      } else {
+        list.innerHTML = `
+          <li>
+            <div class="tyn-media-group">
+                <div class="tyn-media-col">
+                <div class="tyn-media-row">
+                  <h6 class="name">Type a name to search</h6>
+                </div>
+                </div>
+            </div>
+          </li>
+        `;
+      }
+    }, 500);
+  });
+};
+//! end search user

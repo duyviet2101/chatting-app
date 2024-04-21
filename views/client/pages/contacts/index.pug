@@ -11,10 +11,10 @@ block main
         .tyn-aside-head-tools
           ul.tyn-list-inline.gap.gap-3
             li
-              button.btn.btn-icon.btn-light.btn-md.btn-pill(data-bs-toggle='modal' data-bs-target='#addContact')
-                // plus-lg
-                svg.bi.bi-plus-lg(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                  path(fill-rule='evenodd' d='M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2')
+              button.link(data-bs-toggle='modal' data-bs-target='#search-user')
+                svg.bi.bi-search(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                  path(d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0')
+                span Search user
       // .tyn-aside-head
       .tyn-aside-row.pt-0
         ul.nav.nav-tabs.nav-tabs-line
@@ -31,14 +31,6 @@ block main
         // .nav
       // .tyn-aside-row
       .tyn-aside-body(data-simplebar='')
-        .tyn-aside-search
-          .form-group.tyn-pill
-            .form-control-wrap
-              .form-control-icon.start
-                // search
-                svg.bi.bi-search(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                  path(d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0')
-              input#search.form-control.form-control-solid(type='text' placeholder='Search contact / chat')
         // .tyn-aside-search
         .tab-content
           #contact-all.tab-pane.url-triggered.show.active(tabindex='0' role='tabpanel')
@@ -207,24 +199,41 @@ block main
                         each contact in displayContact.contactList
                           .tyn-media.tyn-circle.tyn-size-md.tyn-media-bordered
                             img(src=contact.user.avatar alt=contact.user.fullName)
-                      - var check = false 
                       each contact in contactList
                         - if (contact.user.username === displayContact.username)
-                            - check = true
                             .tyn-media-multiple.action
                               a.btn.btn-primary(href=`/messages/${contact.room_chat_id}`)
                                 // envelope-fill
                                 svg.bi.bi-chat-text-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                                   path(d='M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M4.5 5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1z')
                                 span Message
-                      - if (!check)
-                          .tyn-media-multiple.action
-                            btn.btn.btn-primary(send-request data-username=`${displayContact.username}`)
-                              // person-plus-fill
-                              svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
-                                path(fill-rule='evenodd' d='M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5')
-                              span Add
+                      each contact in contactRequestsSent
+                        - if (contact.username === displayContact.username)
+                            .tyn-media-multiple.action
+                              button.btn.btn-primary(cancel-request data-username=contact.username)
+                                // x-lg
+                                svg.bi.bi-x-lg(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                  path(d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z')
+                                span Cancel Request
+                      each contact in contactRequestsReceived
+                        - if (contact.username === displayContact.username)
+                            .tyn-media-multiple.action
+                              button.btn.btn-primary(accept-request data-username=contact.username)
+                                // check2-circle
+                                svg.bi.bi-check2-circle(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                  path(d='M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0')
+                                  path(fill-rule='evenodd' d='M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z')
+                                span Accept Request
+                      each contact in recommendedAddContact
+                        - if (contact.username === displayContact.username)
+                            .tyn-media-multiple.action
+                              button.btn.btn-primary(send-request data-username=contact.username)
+                                // person-plus-fill
+                                svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                  path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
+                                  path(fill-rule='evenodd' d='M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5')
+                                span Send Request
+
                     //- .tyn-media-row
                 // .tyn-media-group
               // .tyn-profile-info
@@ -344,38 +353,24 @@ block main
 
 
 block modals
-  #addContact.modal.fade(tabindex='-1')
+  #search-user.modal.fade(tabindex='-1')
     .modal-dialog.modal-dialog-centered.modal-sm
       .modal-content.border-0
         .modal-body.p-4
-          h4.pb-2 Search by UserName
+          h4.pb-2 Search by name
           .form-group
             .form-control-wrap
               .form-control-icon.start
                 // search
                 svg.bi.bi-search(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                   path(d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0')
-              input#search-username.form-control.form-control-solid(type='text' placeholder='Enter username')
+              input#input-search.form-control.form-control-solid(type='text' placeholder='Enter username')
           ul.tyn-media-list.gap.gap-3.pt-4
-            each contact in recommendedAddContact
-              li
-                .tyn-media-group
-                  .tyn-media
-                    img(src=contact.avatar alt='')
-                  .tyn-media-col
-                    .tyn-media-row
-                      h6.name #{contact.fullName}
-                    .tyn-media-row
-                      p.content @
-                        | #{contact.username}
-                  ul.tyn-media-option-list.me-n1
-                    li.dropdown
-                      button.btn.btn-icon.btn-white.btn-pill(send-request data-username=`${contact.username}`)
-                        // person-plus-fill
-                        svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                          path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
-                          path(fill-rule='evenodd' d='M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5')
-                // .tyn-media-group
+            li
+              .tyn-media-group()
+                .tyn-media-col
+                  .tyn-media-row
+                    h6.name Type a name to search
               // li
           // .tyn-media-list
         // .modal-body

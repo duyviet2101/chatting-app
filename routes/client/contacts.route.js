@@ -10,4 +10,6 @@ router.get('/profile/:username', asyncHandler(contactsController.profile));
 
 router.get('/contactList/search', asyncHandler(contactsController.searchContactList));
 
+router.get('/search', asyncHandler(contactsController.search));
+
 module.exports = router;

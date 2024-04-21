@@ -110,8 +110,13 @@ module.exports = async (req, res, socket) => {
 
     //? emit info user A to user B
     socket.broadcast.emit('SERVER_RETURN_INFO_CANCEL_REQUEST', {
-      userId: userB._id,
-      username: userA.username
+      userId: userB._id, // user that receive request
+      username: userA.username // user that send request
+    });
+
+    socket.emit('SERVER_RETURN_INFO_CANCEL_REQUEST', {
+      userId: userA._id, // user that send request
+      username: userB.username // user that receive request
     });
 
     //? emit updated length contactRequestsSent to userA
@@ -195,6 +200,9 @@ module.exports = async (req, res, socket) => {
       });
       await room.save();
     }
+
+    //! join room
+    socket.join(room._id.toString());
 
     userA = await User.findOneAndUpdate({
       _id: userA._id
