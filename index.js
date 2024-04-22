@@ -76,7 +76,7 @@ app.use((error, req, res, next) => {
   console.log(error);
   res.render('404', {
     message: error.message,
-    stack: error.stack
+    // stack: error.stack
   })
 });
 //! end handle error

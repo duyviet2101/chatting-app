@@ -627,22 +627,28 @@ if (updateImageTrigger && updateImageTrigger.length > 0) {
 }
 //! end .update-image-trigger
 
-socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
-  const userId = data.userId;
-  const fullName = data.fullName;
-  const content = data.content;
-  const avatar = data.avatar;
-  const createdAt = data.createdAt;
-  const roomChatId = data.roomChatId;
-  const images = data.images;
-
-  if (userId !== window.user._id) {
-    createNotiMessage(`${fullName}: ${content ? content + (images.length ? ' and ' + images.length + ' images' : '') : images.length + ' images'}`, roomChatId);
-  }
-});
+try {
+  socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
+    const userId = data.userId;
+    const fullName = data.fullName;
+    const content = data.content;
+    const avatar = data.avatar;
+    const createdAt = data.createdAt;
+    const roomChatId = data.roomChatId;
+    const images = data.images;
+  
+    if (userId !== window.user._id) {
+      createNotiMessage(`${fullName}: ${content ? content + (images.length ? ' and ' + images.length + ' images' : '') : images.length + ' images'}`, roomChatId);
+    }
+  });
+} catch (error) {
+  
+}
 //end-js
 
 document.addEventListener('DOMContentLoaded', function () {
   const countMessages = document.querySelector('[notifications-messages] .count-messages');
-  countMessages.innerHTML = document.querySelectorAll('[contact-aside].unread').length;
+  if (countMessages) {
+    countMessages.innerHTML = document.querySelectorAll('[contact-aside].unread').length;
+  }
 });

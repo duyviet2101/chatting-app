@@ -13,4 +13,6 @@ router.use('/user', requiredAuth, socket, require('./user.route.js'));
 
 router.use('/contacts', requiredAuth, socket, require('./contacts.route.js'));
 
+router.use('/', require('./home.route.js'));
+
 module.exports = router;
