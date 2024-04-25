@@ -199,8 +199,10 @@ block main
                         each contact in displayContact.contactList
                           .tyn-media.tyn-circle.tyn-size-md.tyn-media-bordered
                             img(src=contact.user.avatar alt=contact.user.fullName)
+                      - var action = false
                       each contact in contactList
-                        - if (contact.user.username === displayContact.username)
+                        - if (contact.user.username === displayContact.username && !action)
+                          - action = true
                             .tyn-media-multiple.action
                               a.btn.btn-primary(href=`/messages/${contact.room_chat_id}`)
                                 // envelope-fill
@@ -208,7 +210,7 @@ block main
                                   path(d='M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M4.5 5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1z')
                                 span Message
                       each contact in contactRequestsSent
-                        - if (contact.username === displayContact.username)
+                        - if (contact.username === displayContact.username && !action)
                             .tyn-media-multiple.action
                               button.btn.btn-primary(cancel-request data-username=contact.username)
                                 // x-lg
@@ -216,7 +218,7 @@ block main
                                   path(d='M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z')
                                 span Cancel Request
                       each contact in contactRequestsReceived
-                        - if (contact.username === displayContact.username)
+                        - if (contact.username === displayContact.username && !action)
                             .tyn-media-multiple.action
                               button.btn.btn-primary(accept-request data-username=contact.username)
                                 // check2-circle
@@ -224,15 +226,14 @@ block main
                                   path(d='M2.5 8a5.5 5.5 0 0 1 8.25-4.764.5.5 0 0 0 .5-.866A6.5 6.5 0 1 0 14.5 8a.5.5 0 0 0-1 0 5.5 5.5 0 1 1-11 0')
                                   path(fill-rule='evenodd' d='M15.354 3.354a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z')
                                 span Accept Request
-                      each contact in recommendedAddContact
-                        - if (contact.username === displayContact.username)
-                            .tyn-media-multiple.action
-                              button.btn.btn-primary(send-request data-username=contact.username)
-                                // person-plus-fill
-                                svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                  path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
-                                  path(fill-rule='evenodd' d='M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5')
-                                span Send Request
+                      - if (!action)
+                          .tyn-media-multiple.action
+                            button.btn.btn-primary(send-request data-username=contact.username)
+                              // person-plus-fill
+                              svg.bi.bi-person-plus-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6')
+                                path(fill-rule='evenodd' d='M13.5 5a.5.5 0 0 1 .5.5V7h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V8h-1.5a.5.5 0 0 1 0-1H13V5.5a.5.5 0 0 1 .5-.5')
+                              span Send Request
 
                     //- .tyn-media-row
                 // .tyn-media-group
