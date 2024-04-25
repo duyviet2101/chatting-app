@@ -53,9 +53,9 @@ block main
                           if (lastMessage)
                             p.content(lastMessage)
                               if (lastMessage.user.toString() == user._id.toString())
-                                | You: #{lastMessage.content}
+                                | You: #{lastMessage.content ? lastMessage.content : '📷 Image'}
                               else
-                                | #{lastMessage.content}
+                                | #{lastMessage.content ? lastMessage.content : '📷 Image'}
                             span.meta(lastTime data-time=lastMessage.createdAt) #{moment(lastMessage.createdAt).fromNow()}
                             span.meta(seen class=`${contact.seen && !contact.unread && lastMessage.user.toString() == user._id.toString() ? '' : 'd-none'}`) Seen 
                           else 

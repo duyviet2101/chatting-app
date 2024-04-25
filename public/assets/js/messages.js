@@ -209,13 +209,13 @@ socket.on('SERVER_RETURN_SEND_MESSAGE', async (data) => {
     const lastMessage = contactAside.querySelector('[lastMessage]');
     const lastTime = contactAside.querySelector('[lastTime]');
     const seen = contactAside.querySelector('[seen]');
-
-    if (userId !== window.user._id) {
-      lastMessage.innerHTML = content;
+    if (userId.toString() != window.user._id.toString()) {
+      lastMessage.innerHTML = content ? content : '📷 Image';
       contactAside.classList.add('unread');
       seen.classList.add('d-none');
     } else {
-      lastMessage.innerHTML = 'You: ' + content;
+      console.log(userId != window.user._id)
+      lastMessage.innerHTML = 'You: ' + (content ? content : '📷 Image');
       contactAside.classList.remove('unread');
       seen.classList.add('d-none');
     }

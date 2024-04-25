@@ -525,6 +525,8 @@ socket.on('SERVER_RETURN_INFO_ACCEPT_REQUEST', data => {
       asideMessagesList.insertAdjacentHTML('beforeend', html);
     }
     //! end insert contact to aside list /messages
+
+    socket.emit('JOIN', infoUser.room_chat_id);
   }
 });
 //! end SERVER_RETURN_INFO_ACCEPT_REQUEST

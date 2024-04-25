@@ -2,16 +2,16 @@ const User = require('../../models/user.model.js');
 const RoomChat = require('../../models/room-chat.model.js');
 
 module.exports = async (req, res, socket) => {
-  
+
   //! user send request contact
   socket.on('CLIENT_SEND_REQUEST_CONTACT', async (username) => {
-    const userA = await User.findOne({ // current User
+    let userA = await User.findOne({ // current User
       _id: req.user._id,
       deleted: false,
       statusAccount: 'active'
     });
 
-    const userB = await User.findOne({ // user recive request
+    let userB = await User.findOne({ // user recive request
       username: username,
       deleted: false,
       statusAccount: 'active',
@@ -28,11 +28,27 @@ module.exports = async (req, res, socket) => {
       return;
     }
 
-    userA.contactRequestsSent.push(userB._id);
-    userB.contactRequestsReceived.push(userA._id);
+    // userA.contactRequestsSent.push(userB._id);
+    // userB.contactRequestsReceived.push(userA._id);
+    userA = await User.findOneAndUpdate({
+      _id: userA._id
+    }, {
+      $push: {
+        contactRequestsSent: userB._id
+      }
+    }, {
+      new: true
+    });
 
-    await userA.save();
-    await userB.save();
+    userB = await User.findOneAndUpdate({
+      _id: userB._id
+    }, {
+      $push: {
+        contactRequestsReceived: userA._id
+      }
+    }, {
+      new: true
+    });
 
     //? emit updated length contactRequestsReceived to userB
     const lengthContactRequestsReceived = userB.contactRequestsReceived.length;
@@ -75,13 +91,13 @@ module.exports = async (req, res, socket) => {
 
   //! user cancel request contact
   socket.on('CLIENT_CANCEL_REQUEST_CONTACT', async (username) => {
-    const userA = await User.findOne({ // current User
+    let userA = await User.findOne({ // current User
       _id: req.user._id,
       deleted: false,
       statusAccount: 'active'
     });
 
-    const userB = await User.findOne({ // user recive request
+    let userB = await User.findOne({ // user recive request
       username: username,
       deleted: false,
       statusAccount: 'active',
@@ -95,11 +111,27 @@ module.exports = async (req, res, socket) => {
       return;
     }
 
-    userA.contactRequestsSent = userA.contactRequestsSent.filter(contact => contact.toString() !== userB._id.toString());
-    userB.contactRequestsReceived = userB.contactRequestsReceived.filter(contact => contact.toString() !== userA._id.toString());
+    // userA.contactRequestsSent = userA.contactRequestsSent.filter(contact => contact.toString() !== userB._id.toString());
+    // userB.contactRequestsReceived = userB.contactRequestsReceived.filter(contact => contact.toString() !== userA._id.toString());
+    userA = await User.findOneAndUpdate({
+      _id: userA._id
+    }, {
+      $pull: {
+        contactRequestsSent: userB._id
+      }
+    }, {
+      new: true
+    });
 
-    await userA.save();
-    await userB.save();
+    userB = await User.findOneAndUpdate({
+      _id: userB._id
+    }, {
+      $pull: {
+        contactRequestsReceived: userA._id
+      }
+    }, {
+      new: true
+    });
 
     //? emit updated length contactRequestsReceived to userB
     const lengthContactRequestsReceived = userB.contactRequestsReceived.length;
@@ -268,7 +300,7 @@ module.exports = async (req, res, socket) => {
       fullName: userA.fullName,
       avatar: userA.avatar,
       room_chat_id: room._id,
-      statusOnline: userA.statusOnline  
+      statusOnline: userA.statusOnline
     };
     socket.broadcast.emit('SERVER_RETURN_INFO_ACCEPT_REQUEST', {
       userId: userB._id,
@@ -299,13 +331,13 @@ module.exports = async (req, res, socket) => {
 
   //! user remove contact
   socket.on('CLIENT_REMOVE_CONTACT', async (username) => {
-    const userA = await User.findOne({ // User want to remove contact
+    let userA = await User.findOne({ // User want to remove contact
       _id: req.user._id,
       deleted: false,
       statusAccount: 'active'
     });
 
-    const userB = await User.findOne({ // user removed
+    let userB = await User.findOne({ // user removed
       username: username,
       deleted: false,
       statusAccount: 'active',
@@ -319,11 +351,31 @@ module.exports = async (req, res, socket) => {
       return;
     }
 
-    userA.contactList = userA.contactList.filter(contact => contact.user.toString() !== userB._id.toString());
-    userB.contactList = userB.contactList.filter(contact => contact.user.toString() !== userA._id.toString());
+    // userA.contactList = userA.contactList.filter(contact => contact.user.toString() !== userB._id.toString());
+    // userB.contactList = userB.contactList.filter(contact => contact.user.toString() !== userA._id.toString());
+    userA = await User.findOneAndUpdate({
+      _id: userA._id
+    }, {
+      $pull: {
+        contactList: {
+          user: userB._id
+        }
+      }
+    }, {
+      new: true
+    });
 
-    await userA.save();
-    await userB.save();
+    userB = await User.findOneAndUpdate({
+      _id: userB._id
+    }, {
+      $pull: {
+        contactList: {
+          user: userA._id
+        }
+      }
+    }, {
+      new: true
+    });
 
     //? emit length contactList to userA
     const lengthContactListA = userA.contactList.length;
@@ -355,13 +407,13 @@ module.exports = async (req, res, socket) => {
 
   //! user reject request contact
   socket.on('CLIENT_REJECT_REQUEST_CONTACT', async (username) => {
-    const user = await User.findOne({ // user reject request
+    let user = await User.findOne({ // user reject request
       _id: req.user._id,
       deleted: false,
       statusAccount: 'active'
     });
 
-    const userB = await User.findOne({ // user send request
+    let userB = await User.findOne({ // user send request
       username: username,
       deleted: false,
       statusAccount: 'active',
@@ -375,11 +427,27 @@ module.exports = async (req, res, socket) => {
       return;
     }
 
-    user.contactRequestsReceived = user.contactRequestsReceived.filter(contact => contact.toString() !== userB._id.toString());
-    userB.contactRequestsSent = userB.contactRequestsSent.filter(contact => contact.toString() !== user._id.toString());
+    // user.contactRequestsReceived = user.contactRequestsReceived.filter(contact => contact.toString() !== userB._id.toString());
+    // userB.contactRequestsSent = userB.contactRequestsSent.filter(contact => contact.toString() !== user._id.toString());
+    user = await User.findOneAndUpdate({
+      _id: user._id
+    }, {
+      $pull: {
+        contactRequestsReceived: userB._id
+      }
+    }, {
+      new: true
+    });
 
-    await user.save();
-    await userB.save();
+    userB = await User.findOneAndUpdate({
+      _id: userB._id
+    }, {
+      $pull: {
+        contactRequestsSent: user._id
+      }
+    }, {
+      new: true
+    });
 
     //? emit updated length contactRequestsSent to userB
     const lengthContactRequestsSent = userB.contactRequestsSent.length;
@@ -408,4 +476,9 @@ module.exports = async (req, res, socket) => {
     });
   });
   //! end user reject request contact
+
+  //! user join room chat
+  socket.on('JOIN', async (roomId) => {
+    socket.join(roomId);
+  });
 }
