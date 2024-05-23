@@ -54,7 +54,7 @@ morgan.token('JSON', (req) => {
 const format = 'IP::client-ip \n:method :url :status - :response-time ms\n\n:JSON\n';
 app.use(morgan(format, {
   skip: (req, res) => {
-      if (req.url.includes('/img') || req.url.includes('/css') || req.url.includes('/js') || req.url.includes('/bootstrap') || req.url.includes('/favicon.ico') || req.url.includes('/tinymce') || req.url.includes('/uploads') || req.url.includes('/fonts') || req.url.includes('/font') || req.url.includes('/jquery') || req.url.includes('/popper') || req.url.includes('/socket.io')){
+      if (req.url.includes('/img') || req.url.includes('/css') || req.url.includes('/js') || req.url.includes('/bootstrap') || req.url.includes('/favicon.ico') || req.url.includes('/tinymce') || req.url.includes('/uploads') || req.url.includes('/fonts') || req.url.includes('/font') || req.url.includes('/jquery') || req.url.includes('/popper') || req.url.includes('/socket.io') || req.url.includes('/images')){
           return true;
       }
       return req.statusCode == 304;
