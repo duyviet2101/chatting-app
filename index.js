@@ -9,6 +9,7 @@ const methodOverride = require('method-override');
 const { Server } = require('socket.io');
 const { createServer } = require('node:http');
 const moment = require('moment-timezone');
+const { pushLogMorganToTelegram } = require('./middlewares/index.js');
 
 const app = express();
 const port = process.env.PORT || 3066;
@@ -32,6 +33,39 @@ app.use(session({
     maxAge: 60000 
   },
 }));
+
+// Tạo một token tùy chỉnh cho morgan để log địa chỉ IP
+morgan.token('client-ip', (req) => {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  // return ip === '::1' ? '127.0.0.1' : ip;
+  return ip;
+});
+
+morgan.token('JSON', (req) => {
+  const res = {
+      query: req.query,
+      params: req.params,
+      body: req.body
+  };
+  return JSON.stringify(res);
+})
+
+// Tạo một format tùy chỉnh cho morgan
+const format = 'IP::client-ip \n:method :url :status - :response-time ms\n\n:JSON\n';
+app.use(morgan(format, {
+  skip: (req, res) => {
+      if (req.url.includes('/img') || req.url.includes('/css') || req.url.includes('/js') || req.url.includes('/bootstrap') || req.url.includes('/favicon.ico') || req.url.includes('/tinymce') || req.url.includes('/uploads') || req.url.includes('/fonts') || req.url.includes('/font') || req.url.includes('/jquery') || req.url.includes('/popper') || req.url.includes('/socket.io')){
+          return true;
+      }
+      return req.statusCode == 304;
+  },
+  stream: {
+      write: pushLogMorganToTelegram,
+      // write: (message) => {
+      //     console.log(message);
+      // }
+  }
+}))
 //! end middlewares
 
 //! databases
